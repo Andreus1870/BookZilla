@@ -1,2 +1,7 @@
 # BookZilla
-Backend for booking facilities
+
+Booking platform for facilities (meeting rooms, sports courts, equipment, etc.)
+
+## Status
+
+🚧 Project skeleton in progress
