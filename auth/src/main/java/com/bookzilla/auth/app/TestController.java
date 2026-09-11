@@ -1,4 +1,4 @@
-package com.bookzilla.app.controller;
+package com.bookzilla.auth.app;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -7,9 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     @GetMapping("/api/test")
-    String printMockData() {
-        return "swagger test";
+    public String testOutput() {
+        return "test. swagger r u here?";
     }
-
-
 }

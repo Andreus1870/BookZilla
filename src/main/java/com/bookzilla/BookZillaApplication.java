@@ -1,4 +1,4 @@
-package com.bookzilla.app;
+package com.bookzilla;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,5 +9,4 @@ public class BookZillaApplication {
     public static void main(String[] args) {
         SpringApplication.run(BookZillaApplication.class, args);
     }
-
 }
