@@ -1,4 +1,4 @@
-package com.bookzilla.auth.infrastructure;
+package com.bookzilla.auth.infrastructure.security;
 
 
 
