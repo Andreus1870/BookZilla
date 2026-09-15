@@ -14,6 +14,13 @@ public class Provider {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
+    public Provider() {
+    }
+
+    public Provider(User user) {
+        this.user = user;
+    }
+
     public Long getId() {
         return id;
     }

@@ -5,15 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2f147d96-7fd8-4e2f-a0a1-3b851540be57" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/domain/Provider.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/domain/User.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/auth/src/main/resources/application.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/auth/src/main/resources/db/migration/V1__add_users_and_providers.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/auth/src/main/resources/db/migration/V2__make_ids_generated.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/workflows/build.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/build.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/persistence/JpaProviderRepositoryAdapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/persistence/JpaUserRepositoryAdapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/web/dto/RegisterRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/auth/src/main/resources/db/migration/V3__add_password_hash_to_users.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/auth/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/application/port/out/ProviderRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/application/port/out/ProviderRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/application/port/out/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/application/port/out/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/application/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/application/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/domain/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/domain/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/persistence/JpaProviderRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/persistence/JpaProviderRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/persistence/JpaUserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/persistence/JpaUserRepository.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,6 +65,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Kotlin Class" />
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -107,7 +110,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;Spring Boot.BookZillaApplication.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/user-registration&quot;,
     &quot;jdk.selected.JAVA_MODULE&quot;: &quot;21&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/home/andreus/work/programming/Java/IdeaProjects/BookZilla/auth/src/main/resources/db/migration&quot;,
@@ -198,6 +201,7 @@
       <workItem from="1789215814640" duration="7000" />
       <workItem from="1789365286476" duration="9399000" />
       <workItem from="1789387976449" duration="278000" />
+      <workItem from="1789440884805" duration="7271000" />
     </task>
     <servers />
   </component>

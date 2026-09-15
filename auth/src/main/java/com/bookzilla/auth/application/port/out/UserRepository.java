@@ -1,8 +1,12 @@
 package com.bookzilla.auth.application.port.out;
 
-import org.springframework.stereotype.Repository;
+import com.bookzilla.auth.domain.User;
 
-@Repository
+import java.util.Optional;
+
 public interface UserRepository {
-
+    User save(User user);
+    Optional<User> findById(Long id);
+    void deleteById(Long id);
+    boolean existsByEmail(String email);
 }
