@@ -2,6 +2,7 @@ package com.bookzilla.auth.infrastructure.security;
 
 
 
+import com.bookzilla.auth.domain.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,8 +23,10 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/api/test"
+                                "/api/auth/**"
                         ).permitAll()
+                        .requestMatchers("/api/user/**").hasRole(Role.USER.name())
+                        .requestMatchers("/api/admin/**").hasRole(Role.ADMIN.name())
                         .anyRequest().authenticated()
                 )
                 .build();

@@ -5,17 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2f147d96-7fd8-4e2f-a0a1-3b851540be57" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/persistence/JpaProviderRepositoryAdapter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/persistence/JpaUserRepositoryAdapter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/web/dto/RegisterRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/auth/src/main/resources/db/migration/V3__add_password_hash_to_users.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/domain/Role.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/auth/src/main/resources/db/migration/V4__add_roles_to_users.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0a0217b2-205f-41ee-85cb-564e11ca5e9f.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/0a0217b2-205f-41ee-85cb-564e11ca5e9f.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0a0217b2-205f-41ee-85cb-564e11ca5e9f/storage_v2/_src_/database/auth_db.ddJ22Q.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0a0217b2-205f-41ee-85cb-564e11ca5e9f/storage_v2/_src_/database/auth_db.ddJ22Q/schema/information_schema.FNRwLQ.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0a0217b2-205f-41ee-85cb-564e11ca5e9f/storage_v2/_src_/database/auth_db.ddJ22Q/schema/pg_catalog.0S1ZNQ.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/0a0217b2-205f-41ee-85cb-564e11ca5e9f/storage_v2/_src_/database/auth_db.ddJ22Q/schema/public.abK9xQ.meta" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/application/port/out/ProviderRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/application/port/out/ProviderRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/application/port/out/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/application/port/out/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/application/port/out/ProviderRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/application/service/ProviderService.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/application/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/application/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/domain/Provider.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/domain/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/domain/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/persistence/JpaProviderRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/persistence/JpaProviderRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/persistence/JpaUserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/persistence/JpaUserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/persistence/JpaProviderRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/persistence/JpaProviderRepositoryAdapter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/security/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/security/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/web/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/web/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/src/main/resources/db/migration/V1__add_users_and_providers.sql" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/resources/db/migration/V1__add_users.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/src/main/resources/db/migration/V2__make_ids_generated.sql" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/resources/db/migration/V2__make_ids_generated.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,6 +76,7 @@
         <option value="Kotlin Class" />
         <option value="Interface" />
         <option value="Class" />
+        <option value="Enum" />
       </list>
     </option>
   </component>
@@ -202,6 +212,8 @@
       <workItem from="1789365286476" duration="9399000" />
       <workItem from="1789387976449" duration="278000" />
       <workItem from="1789440884805" duration="7271000" />
+      <workItem from="1789469138477" duration="12910000" />
+      <workItem from="1789528556273" duration="864000" />
     </task>
     <servers />
   </component>

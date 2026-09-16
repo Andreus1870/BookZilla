@@ -24,6 +24,10 @@ public class User {
     @Column(name = "email", length = 254, nullable = false, unique = true)
     private String email;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role;
+
     @Column(name = "phone", length = 32)
     private String phone;
 
@@ -44,6 +48,7 @@ public class User {
         this.lastName = lastName;
         this.passwordHash = passwordHash;
         this.email = email;
+        this.role = Role.USER;
         this.registrationDate = Instant.now();
     }
 

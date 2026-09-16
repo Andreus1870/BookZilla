@@ -8,11 +8,3 @@ CREATE TABLE users (
     city VARCHAR(100),
     registration_date TIMESTAMPTZ NOT NULL
 );
-
-CREATE TABLE providers (
-    id BIGINT PRIMARY KEY,
-    user_id BIGINT NOT NULL UNIQUE,
-    CONSTRAINT fk_user
-        FOREIGN KEY (user_id)
-        REFERENCES users (id)
-);
