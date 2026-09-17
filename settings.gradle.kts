@@ -10,3 +10,4 @@ rootProject.name = "BookZilla"
 include("auth")
 include("booking")
 include("notification")
+include("contracts")
