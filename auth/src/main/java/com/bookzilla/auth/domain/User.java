@@ -18,8 +18,15 @@ public class User {
     @Column(name = "last_name", length = 100, nullable = false)
     private String lastName;
 
+    @Column(name = "password_hash", length = 255, nullable = false)
+    private String passwordHash;
+
     @Column(name = "email", length = 254, nullable = false, unique = true)
     private String email;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role;
 
     @Column(name = "phone", length = 32)
     private String phone;
@@ -36,10 +43,12 @@ public class User {
     public User() {
     }
 
-    public User(String firstName, String lastName, String email) {
+    public User(String firstName, String lastName, String passwordHash, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.passwordHash = passwordHash;
         this.email = email;
+        this.role = Role.USER;
         this.registrationDate = Instant.now();
     }
 
@@ -77,6 +86,10 @@ public class User {
 
     public String getLastName() {
         return lastName;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
     public String getEmail() {
