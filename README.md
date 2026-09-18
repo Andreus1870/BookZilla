@@ -58,8 +58,9 @@ notification
 ## Running
 
 bash
+```
 ./gradlew bootRun
-
+```
 
 
 Application runs on `http://localhost:8080`.
