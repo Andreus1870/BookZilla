@@ -5,31 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2f147d96-7fd8-4e2f-a0a1-3b851540be57" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/infrastructure/persistence/AuthDatabaseConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/booking/src/main/java/com/bookzilla/booking/application/port/out/ProviderRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/booking/src/main/java/com/bookzilla/booking/application/service/ProviderService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/booking/src/main/java/com/bookzilla/booking/domain/Provider.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/booking/src/main/java/com/bookzilla/booking/infrastructure/event/UserRegisteredEventListener.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/booking/src/main/java/com/bookzilla/booking/infrastructure/persistence/BookingDatabaseConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/booking/src/main/java/com/bookzilla/booking/infrastructure/persistence/JpaProviderRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/booking/src/main/java/com/bookzilla/booking/infrastructure/persistence/JpaProviderRepositoryAdapter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/booking/src/main/resources/db/migration/booking/V1__add_providers.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contracts/build.gradle.kts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/contracts/src/main/java/com/bookzilla/contracts/event/UserRegistered.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/auth/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/application/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/application/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth/src/main/resources/db/migration/V1__add_users.sql" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/resources/db/migration/auth/V1__add_users.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth/src/main/resources/db/migration/V2__make_ids_generated.sql" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/resources/db/migration/auth/V2__make_ids_generated.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth/src/main/resources/db/migration/V3__add_password_hash_to_users.sql" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/resources/db/migration/auth/V3__add_password_hash_to_users.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth/src/main/resources/db/migration/V4__add_roles_to_users.sql" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/resources/db/migration/auth/V4__add_roles_to_users.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/booking/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/booking/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/booking/src/main/java/com/bookzilla/booking/application/service/ProviderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/booking/src/main/java/com/bookzilla/booking/application/service/ProviderService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/booking/src/main/java/com/bookzilla/booking/infrastructure/event/UserRegisteredEventListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/booking/src/main/java/com/bookzilla/booking/infrastructure/event/UserRegisteredEventListener.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -226,6 +205,8 @@
       <workItem from="1789440884805" duration="7271000" />
       <workItem from="1789469138477" duration="12910000" />
       <workItem from="1789528556273" duration="22276000" />
+      <workItem from="1789640909318" duration="2383000" />
+      <workItem from="1789705632103" duration="1991000" />
     </task>
     <servers />
   </component>

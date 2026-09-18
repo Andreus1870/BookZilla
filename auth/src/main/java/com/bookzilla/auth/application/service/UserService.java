@@ -4,20 +4,19 @@ import com.bookzilla.contracts.event.UserRegistered;
 import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
 import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.User;
-import jakarta.transaction.Transactional;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@Transactional(transactionManager = "authTransactionManager")
 public class UserService {
 
 
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final ApplicationEventPublisher applicationEventPublisher;
-
 
     public UserService(UserRepository userRepository,
                        PasswordEncoder encoder,
