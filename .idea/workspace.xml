@@ -5,10 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2f147d96-7fd8-4e2f-a0a1-3b851540be57" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/booking/src/test/java/com/bookzilla/booking/application/service/ProviderServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/application/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/application/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/booking/src/main/java/com/bookzilla/booking/application/service/ProviderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/booking/src/main/java/com/bookzilla/booking/application/service/ProviderService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/booking/src/main/java/com/bookzilla/booking/infrastructure/event/UserRegisteredEventListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/booking/src/main/java/com/bookzilla/booking/infrastructure/event/UserRegisteredEventListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/auth/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/domain/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth/src/main/java/com/bookzilla/auth/domain/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/booking/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/booking/build.gradle.kts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,6 +68,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="feature/user-registration" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="JsbtTreeLayoutManager">
@@ -91,42 +98,47 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;Gradle.BookZilla [build].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Build BookZilla.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Spring Boot.BookZillaApplication.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/user-registration&quot;,
-    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;21&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/andreus/work/programming/Java/IdeaProjects/BookZilla/auth/src/main/resources/db/migration&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;onboarding.tips.debug.path&quot;: &quot;/home/andreus/work/programming/Java/IdeaProjects/BookZilla/contracts/src/main/java/com/bookzilla/Main.java&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Gradle.BookZilla [build].executor": "Run",
+    "Gradle.Build BookZilla.executor": "Run",
+    "Gradle.Download Sources.executor": "Run",
+    "Gradle.ProviderServiceTest.executor": "Run",
+    "Gradle.Tests in 'com.bookzilla.booking'.executor": "Debug",
+    "Gradle.UserServiceTest.executor": "Run",
+    "Gradle.UserServiceTest.shouldRejectRegistrationWhenEmailExists.executor": "Run",
+    "Kotlin script (Beta).build.gradle.kts.executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Spring Boot.BookZillaApplication.executor": "Run",
+    "git-widget-placeholder": "feature/auth/tests",
+    "jdk.selected.JAVA_MODULE": "21",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/andreus/work/programming/Java/IdeaProjects/BookZilla/auth/src/main/resources/db/migration",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "/home/andreus/work/programming/Java/IdeaProjects/BookZilla/contracts/src/main/java/com/bookzilla/Main.java",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/auth/src/main/resources/db/migration" />
@@ -140,7 +152,7 @@
       <recent name="com.bookzilla.contracts.event" />
     </key>
   </component>
-  <component name="RunManager" selected="Spring Boot.BookZillaApplication">
+  <component name="RunManager">
     <configuration name="BookZilla [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -163,6 +175,54 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
+    <configuration name="Tests in 'com.bookzilla.booking'" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":booking:test" />
+            <option value="--tests" />
+            <option value="&quot;com.bookzilla.booking.*&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="UserServiceTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":auth:test" />
+            <option value="--tests" />
+            <option value="&quot;com.bookzilla.auth.application.service.UserServiceTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
     <configuration name="BookZillaApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
       <module name="BookZilla.main" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.bookzilla.BookZillaApplication" />
@@ -171,11 +231,15 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="Gradle.Tests in 'com.bookzilla.booking'" />
+      <item itemvalue="Gradle.UserServiceTest" />
       <item itemvalue="Gradle.BookZilla [build]" />
       <item itemvalue="Spring Boot.BookZillaApplication" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.Tests in 'com.bookzilla.booking'" />
+        <item itemvalue="Gradle.UserServiceTest" />
         <item itemvalue="Gradle.BookZilla [build]" />
       </list>
     </recent_temporary>
@@ -207,11 +271,23 @@
       <workItem from="1789528556273" duration="22276000" />
       <workItem from="1789640909318" duration="2383000" />
       <workItem from="1789705632103" duration="1991000" />
+      <workItem from="1789788904431" duration="5133000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />

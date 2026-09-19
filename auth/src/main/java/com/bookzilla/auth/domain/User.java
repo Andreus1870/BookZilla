@@ -96,6 +96,10 @@ public class User {
         return email;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
     public String getPhone() {
         return phone;
     }
