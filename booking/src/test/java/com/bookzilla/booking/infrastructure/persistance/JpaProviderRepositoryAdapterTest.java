@@ -9,6 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -35,6 +37,25 @@ public class JpaProviderRepositoryAdapterTest {
         verify(jpaProviderRepository).save(provider);
 
         assertThat(provider).isSameAs(result);
+    }
+
+    @Test
+    void shouldFindByUserId() {
+        //arrange
+        Long userId = 12L;
+        Provider provider = new Provider(userId);
+
+        when(jpaProviderRepository
+                .findByUserId(userId))
+                .thenReturn(Optional.of(provider));
+
+        //act
+        Optional<Provider> result = jpaProviderRepositoryAdapter.findByUserId(userId);
+
+        //assert
+        verify(jpaProviderRepository).findByUserId(userId);
+
+        assertThat(result).containsSame(provider);
     }
 
 }
