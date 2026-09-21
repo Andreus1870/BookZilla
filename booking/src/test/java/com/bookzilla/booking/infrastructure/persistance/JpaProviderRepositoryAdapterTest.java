@@ -1,8 +1,8 @@
 package com.bookzilla.booking.infrastructure.persistance;
 
 import com.bookzilla.booking.domain.Provider;
-import com.bookzilla.booking.infrastructure.persistence.JpaProviderRepository;
-import com.bookzilla.booking.infrastructure.persistence.JpaProviderRepositoryAdapter;
+import com.bookzilla.booking.infrastructure.persistence.provider.JpaProviderRepository;
+import com.bookzilla.booking.infrastructure.persistence.provider.JpaProviderRepositoryAdapter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
