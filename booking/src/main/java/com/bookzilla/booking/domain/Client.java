@@ -15,8 +15,7 @@ public class Client {
     public Client() {
     }
 
-    public Client(Long id, Long userId) {
-        this.id = id;
+    public Client(Long userId) {
         this.userId = userId;
     }
 
