@@ -1,5 +1,6 @@
 package com.bookzilla.booking.infrastructure.persistence;
 
+import com.bookzilla.booking.domain.Provider;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
 import org.flywaydb.core.Flyway;
@@ -58,7 +59,7 @@ public class BookingDatabaseConfig {
 
         return builder
                 .dataSource(dataSource)
-                .packages("com.bookzilla.booking.domain")
+                .packages(Provider.class)
                 .persistenceUnit("booking")
                 .build();
     }
