@@ -1,5 +1,6 @@
 package com.bookzilla.booking.infrastructure.event;
 
+import com.bookzilla.booking.application.service.ClientService;
 import com.bookzilla.booking.application.service.ProviderService;
 import com.bookzilla.contracts.event.UserRegistered;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,9 @@ public class UserRegisteredEventListenerTest {
     @Mock
     private ProviderService providerService;
 
+    @Mock
+    private ClientService clientService;
+
     @InjectMocks
     private UserRegisteredEventListener userRegisteredEventListener;
 
@@ -30,6 +34,7 @@ public class UserRegisteredEventListenerTest {
 
         //assert
         verify(providerService).createProvider(userId);
+        verify(clientService).createClient(userId);
 
     }
 }
