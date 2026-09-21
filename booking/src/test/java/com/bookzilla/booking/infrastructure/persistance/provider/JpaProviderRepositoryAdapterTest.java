@@ -1,4 +1,4 @@
-package com.bookzilla.booking.infrastructure.persistance;
+package com.bookzilla.booking.infrastructure.persistance.provider;
 
 import com.bookzilla.booking.domain.Provider;
 import com.bookzilla.booking.infrastructure.persistence.provider.JpaProviderRepository;
