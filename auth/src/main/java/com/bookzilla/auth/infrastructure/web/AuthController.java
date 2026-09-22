@@ -1,9 +1,10 @@
 package com.bookzilla.auth.infrastructure.web;
 
+import com.bookzilla.auth.application.service.AuthService;
 import com.bookzilla.auth.application.service.UserService;
+import com.bookzilla.auth.infrastructure.web.dto.LoginRequest;
 import com.bookzilla.auth.infrastructure.web.dto.RegisterRequest;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,10 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final UserService userService;
+    private final AuthService authService;
 
-    @Autowired
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, AuthService authService) {
         this.userService = userService;
+        this.authService = authService;
     }
 
     @PostMapping("/api/auth/register")
@@ -24,5 +26,10 @@ public class AuthController {
                             registerRequest.lastName(),
                             registerRequest.password(),
                             registerRequest.email());
+    }
+
+    @PostMapping("/api/auth/login")
+    public void login(@Valid @RequestBody LoginRequest loginRequest){
+        authService.login(loginRequest.email(), loginRequest.password());
     }
 }
