@@ -3,14 +3,14 @@ package com.bookzilla.auth.domain;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     @Column(name = "first_name", length = 100, nullable = false)
     private String firstName;
@@ -44,6 +44,7 @@ public class User {
     }
 
     public User(String firstName, String lastName, String passwordHash, String email) {
+        this.id = UUID.randomUUID();
         this.firstName = firstName;
         this.lastName = lastName;
         this.passwordHash = passwordHash;
@@ -76,7 +77,7 @@ public class User {
         this.city = city;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 

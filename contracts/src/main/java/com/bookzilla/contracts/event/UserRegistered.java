@@ -1,4 +1,6 @@
 package com.bookzilla.contracts.event;
 
-public record UserRegistered(Long userId) {
+import java.util.UUID;
+
+public record UserRegistered(UUID userId) {
 }

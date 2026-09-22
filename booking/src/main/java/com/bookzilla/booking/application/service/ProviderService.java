@@ -5,6 +5,8 @@ import com.bookzilla.booking.domain.Provider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @Transactional(transactionManager = "bookingTransactionManager")
 public class ProviderService {
@@ -14,7 +16,7 @@ public class ProviderService {
         this.providerRepository = providerRepository;
     }
 
-    public Provider createProvider(Long userId) {
+    public Provider createProvider(UUID userId) {
         return providerRepository.save(new Provider(userId));
     }
 }

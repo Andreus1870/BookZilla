@@ -9,6 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.UUID;
+
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,15 +28,15 @@ public class UserRegisteredEventListenerTest {
     @Test
     void shouldHandleUserRegistered() {
         //arrange
-        Long userId = 12L;
-        UserRegistered userRegistered = new UserRegistered(userId);
+        UUID id = UUID.randomUUID();
+        UserRegistered userRegistered = new UserRegistered(id);
 
         //act
         userRegisteredEventListener.handleUserRegistered(userRegistered);
 
         //assert
-        verify(providerService).createProvider(userId);
-        verify(clientService).createClient(userId);
+        verify(providerService).createProvider(id);
+        verify(clientService).createClient(id);
 
     }
 }

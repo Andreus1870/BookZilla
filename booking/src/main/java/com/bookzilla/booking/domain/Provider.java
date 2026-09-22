@@ -2,29 +2,23 @@ package com.bookzilla.booking.domain;
 
 import jakarta.persistence.*;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "providers")
 public class Provider {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "user_id", nullable = false, unique = true)
-    private Long userId;
-
+    private UUID id;
 
     public Provider() {
     }
 
-    public Provider(Long userId) {
-        this.userId = userId;
+    public Provider(UUID id) {
+        this.id = id;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
 }

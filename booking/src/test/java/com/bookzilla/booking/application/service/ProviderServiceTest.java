@@ -9,6 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -26,14 +28,14 @@ public class ProviderServiceTest {
     @Test
     void shouldCreateProviderSuccessfully() {
         // arrange
-        Long userId = 17L;
+        UUID id = UUID.randomUUID();
 
-        Provider savedProvider = new Provider(userId);
+        Provider savedProvider = new Provider(id);
 
         when(providerRepository.save(any(Provider.class))).thenReturn(savedProvider);
 
         // act
-        Provider result = providerService.createProvider(userId);
+        Provider result = providerService.createProvider(id);
 
         // assert
         ArgumentCaptor<Provider> providerCaptor = ArgumentCaptor.forClass(Provider.class);
@@ -42,7 +44,7 @@ public class ProviderServiceTest {
 
         Provider provider = providerCaptor.getValue();
 
-        assertThat(provider.getUserId()).isEqualTo(userId);
+        assertThat(provider.getId()).isEqualTo(id);
         assertThat(result).isSameAs(savedProvider);
 
     }

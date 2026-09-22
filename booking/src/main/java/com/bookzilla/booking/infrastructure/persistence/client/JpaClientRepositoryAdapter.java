@@ -18,8 +18,4 @@ public class JpaClientRepositoryAdapter implements ClientRepository {
     public Client save(Client client){
         return jpaClientRepository.save(client);
     }
-
-    public Optional<Client> findByUserId(Long userId) {
-        return jpaClientRepository.findByUserId(userId);
-    }
 }
