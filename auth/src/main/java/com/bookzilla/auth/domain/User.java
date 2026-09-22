@@ -19,7 +19,7 @@ public class User {
     private String lastName;
 
     @Column(name = "password_hash", length = 255, nullable = false)
-    private String passwordHash;
+    private String password;
 
     @Column(name = "email", length = 254, nullable = false, unique = true)
     private String email;
@@ -43,11 +43,11 @@ public class User {
     public User() {
     }
 
-    public User(String firstName, String lastName, String passwordHash, String email) {
+    public User(String firstName, String lastName, String password, String email) {
         this.id = UUID.randomUUID();
         this.firstName = firstName;
         this.lastName = lastName;
-        this.passwordHash = passwordHash;
+        this.password = password;
         this.email = email;
         this.role = Role.USER;
         this.registrationDate = Instant.now();
@@ -89,8 +89,8 @@ public class User {
         return lastName;
     }
 
-    public String getPasswordHash() {
-        return passwordHash;
+    public String getPassword() {
+        return password;
     }
 
     public String getEmail() {

@@ -55,7 +55,7 @@ public class UserServiceTest {
         assertThat(savedUser.getFirstName()).isEqualTo(firstName);
         assertThat(savedUser.getLastName()).isEqualTo(lastName);
         assertThat(savedUser.getEmail()).isEqualTo(email);
-        assertThat(savedUser.getPasswordHash()).isEqualTo("hashedPassword");
+        assertThat(savedUser.getPassword()).isEqualTo("hashedPassword");
         assertThat(savedUser.getRole()).isEqualTo(Role.USER);
 
         verify(applicationEventPublisher).publishEvent(any(UserRegistered.class));
