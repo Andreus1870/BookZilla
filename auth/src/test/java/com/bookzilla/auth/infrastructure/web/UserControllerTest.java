@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class UserControllerTest {
@@ -17,7 +16,7 @@ public class UserControllerTest {
     private UserService userService;
 
     @InjectMocks
-    private UserController userController;
+    private AuthController authController;
 
     void shouldRegister() {
         //arrange
@@ -29,7 +28,7 @@ public class UserControllerTest {
         );
 
         //act
-        userController.register(registerRequest);
+        authController.register(registerRequest);
 
         //assert
         verify(userService).register(

@@ -43,4 +43,6 @@ public class UserService {
 
         applicationEventPublisher.publishEvent(userRegisteredEvent);
     }
+
+
 }
