@@ -1,7 +1,6 @@
 package com.bookzilla.auth.infrastructure.security;
 
 
-
 import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.Role;
 import com.bookzilla.auth.domain.User;
@@ -12,8 +11,7 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -60,18 +58,20 @@ public class SecurityConfig {
 
         return new UserDetailsService() {
             @Override
-            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+            public BookZillaUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
                 User user = userRepository
                         .findByEmail(username)
                         .orElseThrow(() -> new UsernameNotFoundException("User with email = " + username + " not found"));
 
-                Set<SimpleGrantedAuthority> roles = Collections.singleton(user.getRole().toAuthority());
+                Set<GrantedAuthority> roles = Collections.singleton(user.getRole().toAuthority());
 
-                return new org.springframework.security.core.userdetails.User(
+                return new BookZillaUserDetails(
+                        user.getId(),
                         user.getEmail(),
                         user.getPassword(),
-                        roles);
+                        roles
+                );
             }
         };
 
