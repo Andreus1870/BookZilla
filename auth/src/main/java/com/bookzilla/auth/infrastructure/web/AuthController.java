@@ -3,6 +3,7 @@ package com.bookzilla.auth.infrastructure.web;
 import com.bookzilla.auth.application.service.AuthService;
 import com.bookzilla.auth.application.service.UserService;
 import com.bookzilla.auth.infrastructure.web.dto.LoginRequest;
+import com.bookzilla.auth.infrastructure.web.dto.LoginResponse;
 import com.bookzilla.auth.infrastructure.web.dto.RegisterRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +30,9 @@ public class AuthController {
     }
 
     @PostMapping("/api/auth/login")
-    public void login(@Valid @RequestBody LoginRequest loginRequest){
-        authService.login(loginRequest.email(), loginRequest.password());
+    public LoginResponse login(@Valid @RequestBody LoginRequest loginRequest){
+        return new LoginResponse(
+                authService.login(loginRequest.email(), loginRequest.password())
+        );
     }
 }

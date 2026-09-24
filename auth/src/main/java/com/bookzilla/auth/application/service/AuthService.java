@@ -2,6 +2,7 @@ package com.bookzilla.auth.application.service;
 
 import com.bookzilla.auth.domain.Role;
 import com.bookzilla.auth.infrastructure.security.BookZillaUserDetails;
+import com.bookzilla.auth.infrastructure.web.dto.LoginResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

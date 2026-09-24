@@ -2,6 +2,7 @@ plugins {
     id("org.springframework.boot") version "3.5.5"
     id("io.spring.dependency-management") version "1.1.7"
     java
+    idea   // ← ДОДАНО
 }
 
 group = "com.bookzilla"
@@ -18,11 +19,9 @@ repositories {
 }
 
 dependencies {
-
     implementation(project(":auth"))
     implementation(project(":booking"))
     implementation(project(":notification"))
-
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -31,6 +30,7 @@ dependencies {
 subprojects {
     apply(plugin = "java")
     apply(plugin = "io.spring.dependency-management")
+    apply(plugin = "idea")   // ← ДОДАТИ ДЛЯ SUBPROJECTS
 
     group = "com.bookzilla"
 
@@ -48,6 +48,20 @@ subprojects {
         imports {
             mavenBom("org.springframework.boot:spring-boot-dependencies:3.5.5")
         }
+    }
+
+    idea {
+        module {
+            isDownloadSources = true
+            isDownloadJavadoc = true
+        }
+    }
+}
+
+idea {
+    module {
+        isDownloadSources = true
+        isDownloadJavadoc = true
     }
 }
 
