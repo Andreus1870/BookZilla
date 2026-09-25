@@ -23,7 +23,7 @@ public class AccessTokenService {
 
     public String generateAccessToken(UUID userId, Role role) {
         SecretKey key = Keys.hmacShaKeyFor(
-                Decoders.BASE64.decode(jwtProperties.getSecret())
+                Decoders.BASE64URL.decode(jwtProperties.getSecret())
         );
 
         Instant now = Instant.now();
