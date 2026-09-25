@@ -1,6 +1,6 @@
 package com.bookzilla.auth.infrastructure.security;
 
-import com.bookzilla.auth.infrastructure.configuration.JwtProperties;
+import com.bookzilla.auth.infrastructure.token.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;

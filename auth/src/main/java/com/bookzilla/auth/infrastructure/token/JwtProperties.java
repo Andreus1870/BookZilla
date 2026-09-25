@@ -1,4 +1,4 @@
-package com.bookzilla.auth.infrastructure.configuration;
+package com.bookzilla.auth.infrastructure.token;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

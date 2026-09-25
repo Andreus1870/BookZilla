@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class JpaUserRepositoryAdapter implements UserRepository {
@@ -36,7 +37,12 @@ public class JpaUserRepositoryAdapter implements UserRepository {
         return jpaUserRepository.existsByEmail(email);
     }
 
+    @Override
     public Optional<User> findByEmail(String email) {
         return jpaUserRepository.findByEmailIgnoreCase(email);
+    }
+
+    public User getUserByUuid(UUID userId){
+        return jpaUserRepository.getUserById(userId);
     }
 }

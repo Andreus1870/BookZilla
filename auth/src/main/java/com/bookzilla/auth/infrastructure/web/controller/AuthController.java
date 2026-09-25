@@ -1,4 +1,4 @@
-package com.bookzilla.auth.infrastructure.web;
+package com.bookzilla.auth.infrastructure.web.controller;
 
 import com.bookzilla.auth.application.service.AuthService;
 import com.bookzilla.auth.application.service.UserService;
@@ -8,9 +8,11 @@ import com.bookzilla.auth.infrastructure.web.dto.RegisterRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final UserService userService;
@@ -21,7 +23,7 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/api/auth/register")
+    @PostMapping("/register")
     public void register(@Valid @RequestBody RegisterRequest registerRequest){
         userService.register(registerRequest.firstName(),
                             registerRequest.lastName(),
@@ -29,7 +31,7 @@ public class AuthController {
                             registerRequest.email());
     }
 
-    @PostMapping("/api/auth/login")
+    @PostMapping("/login")
     public LoginResponse login(@Valid @RequestBody LoginRequest loginRequest){
         return new LoginResponse(
                 authService.login(loginRequest.email(), loginRequest.password())

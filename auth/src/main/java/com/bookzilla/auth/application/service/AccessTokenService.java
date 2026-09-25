@@ -1,7 +1,7 @@
 package com.bookzilla.auth.application.service;
 
 import com.bookzilla.auth.domain.Role;
-import com.bookzilla.auth.infrastructure.configuration.JwtProperties;
+import com.bookzilla.auth.infrastructure.token.JwtProperties;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

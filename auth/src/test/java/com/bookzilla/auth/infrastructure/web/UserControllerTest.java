@@ -1,6 +1,7 @@
 package com.bookzilla.auth.infrastructure.web;
 
 import com.bookzilla.auth.application.service.UserService;
+import com.bookzilla.auth.infrastructure.web.controller.AuthController;
 import com.bookzilla.auth.infrastructure.web.dto.RegisterRequest;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
