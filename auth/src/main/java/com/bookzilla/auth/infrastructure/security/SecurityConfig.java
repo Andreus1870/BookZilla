@@ -65,23 +65,20 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
 
-        return new UserDetailsService() {
-            @Override
-            public BookZillaUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return username -> {
 
-                User user = userRepository
-                        .findByEmail(username)
-                        .orElseThrow(() -> new UsernameNotFoundException("User with email = " + username + " not found"));
+            User user = userRepository
+                    .findByEmail(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("User with email = " + username + " not found"));
 
-                Set<GrantedAuthority> roles = Collections.singleton(user.getRole().toAuthority());
+            Set<GrantedAuthority> roles = Collections.singleton(user.getRole().toAuthority());
 
-                return new BookZillaUserDetails(
-                        user.getId(),
-                        user.getEmail(),
-                        user.getPassword(),
-                        roles
-                );
-            }
+            return new BookZillaUserDetails(
+                    user.getId(),
+                    user.getEmail(),
+                    user.getPassword(),
+                    roles
+            );
         };
 
     }
