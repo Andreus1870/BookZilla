@@ -24,9 +24,6 @@ public class UserServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private PasswordEncoder passwordEncoder;
-
-    @Mock
     private ApplicationEventPublisher applicationEventPublisher;
 
     @InjectMocks
@@ -41,10 +38,9 @@ public class UserServiceTest {
         String email = "john@example.com";
 
         when(userRepository.existsByEmail(email)).thenReturn(false);
-        when(passwordEncoder.encode(password)).thenReturn("hashedPassword");
 
         // act
-        userService.register(firstName, lastName, password, email);
+        userService.register(firstName, lastName, email);
 
         // assert
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
@@ -55,8 +51,6 @@ public class UserServiceTest {
         assertThat(savedUser.getFirstName()).isEqualTo(firstName);
         assertThat(savedUser.getLastName()).isEqualTo(lastName);
         assertThat(savedUser.getEmail()).isEqualTo(email);
-        assertThat(savedUser.getPassword()).isEqualTo("hashedPassword");
-        assertThat(savedUser.getRole()).isEqualTo(Role.USER);
 
         verify(applicationEventPublisher).publishEvent(any(UserRegistered.class));
     }
@@ -75,10 +69,9 @@ public class UserServiceTest {
         // act and assert
         assertThrows(
                 EmailAlreadyRegisteredException.class,
-                () -> userService.register(firstName, lastName, password, email)
+                () -> userService.register(firstName, lastName, email)
         );
         verify(userRepository, never()).save(any(User.class));
-        verify(passwordEncoder, never()).encode(anyString());
         verify(applicationEventPublisher, never()).publishEvent(any());
     }
 

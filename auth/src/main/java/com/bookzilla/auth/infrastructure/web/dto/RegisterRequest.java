@@ -12,10 +12,6 @@ public record RegisterRequest(
         String lastName,
 
         @NotBlank
-        @Size(min = 8, max = 255)
-        String password,
-
-        @NotBlank
         @Email
         @Size(max = 254)
         String email

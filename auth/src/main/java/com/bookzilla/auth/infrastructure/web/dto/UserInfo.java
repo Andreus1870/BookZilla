@@ -6,6 +6,5 @@ public record UserInfo (String firstName,
                         String phone,
                         String country,
                         String city,
-                        String role,
                         String registrationDate){
 }

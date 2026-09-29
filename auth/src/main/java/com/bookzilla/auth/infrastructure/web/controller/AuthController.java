@@ -22,7 +22,6 @@ public class AuthController {
     public void register(@Valid @RequestBody RegisterRequest registerRequest){
         userService.register(registerRequest.firstName(),
                             registerRequest.lastName(),
-                            registerRequest.password(),
                             registerRequest.email());
     }
 }

@@ -27,7 +27,6 @@ public class JpaUserRepositoryAdapterTest {
         User user = new User(
                 "John",
                 "Doe",
-                "hashedPassword",
                 "john@example.com");
 
         when(jpaUserRepository.save(user)).thenReturn(user);
