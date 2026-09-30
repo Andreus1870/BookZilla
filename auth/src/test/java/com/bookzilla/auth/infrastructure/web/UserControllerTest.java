@@ -24,7 +24,8 @@ public class UserControllerTest {
         RegisterRequest registerRequest = new RegisterRequest(
                 "user",
                 "green",
-                "email@example.com"
+                "email@example.com",
+                "123456789"
         );
 
         //act
@@ -34,7 +35,8 @@ public class UserControllerTest {
         verify(userService).register(
                 "user",
                 "green",
-                "email@example.com"
+                "email@example.com",
+                "123456789"
         );
     }
 }

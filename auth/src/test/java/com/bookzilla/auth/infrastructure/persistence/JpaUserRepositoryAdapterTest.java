@@ -7,6 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,7 +29,8 @@ public class JpaUserRepositoryAdapterTest {
         User user = new User(
                 "John",
                 "Doe",
-                "john@example.com");
+                "john@example.com",
+                UUID.randomUUID());
 
         when(jpaUserRepository.save(user)).thenReturn(user);
 
