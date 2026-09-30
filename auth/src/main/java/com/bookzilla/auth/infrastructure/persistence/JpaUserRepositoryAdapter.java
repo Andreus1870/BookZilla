@@ -42,7 +42,7 @@ public class JpaUserRepositoryAdapter implements UserRepository {
         return jpaUserRepository.findByEmailIgnoreCase(email);
     }
 
-    public User getUserByUuid(UUID userId){
-        return jpaUserRepository.getUserById(userId);
+    public User getUserByKeycloakId(UUID userId){
+        return jpaUserRepository.getUserByKeycloakId(userId);
     }
 }

@@ -12,5 +12,5 @@ public interface UserRepository {
     void deleteById(Long id);
     boolean existsByEmail(String email);
     Optional<User> findByEmail(String email);
-    User getUserByUuid(UUID userId);
+    User getUserByKeycloakId(UUID keycloakId);
 }

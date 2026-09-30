@@ -2,7 +2,6 @@ package com.bookzilla.auth.application.service;
 
 import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
 import com.bookzilla.auth.application.port.out.UserRepository;
-import com.bookzilla.auth.domain.Role;
 import com.bookzilla.auth.domain.User;
 import com.bookzilla.contracts.event.UserRegistered;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;

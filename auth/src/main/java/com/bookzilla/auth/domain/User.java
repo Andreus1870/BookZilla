@@ -12,6 +12,9 @@ public class User {
     @Id
     private UUID id;
 
+    @Column(name = "keycloak_id", nullable = false, unique = true)
+    private UUID keycloakId;
+
     @Column(name = "first_name", length = 100, nullable = false)
     private String firstName;
 
@@ -36,8 +39,9 @@ public class User {
     public User() {
     }
 
-    public User(String firstName, String lastName, String email) {
+    public User(String firstName, String lastName, String email, UUID keycloakId) {
         this.id = UUID.randomUUID();
+        this.keycloakId = keycloakId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

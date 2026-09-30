@@ -1,6 +1,7 @@
 package com.bookzilla.auth.application.service;
 
 import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
+import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.User;
 import com.bookzilla.auth.infrastructure.web.dto.UserInfo;
@@ -17,22 +18,29 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final IdentityProvider identityProvider;
 
     public UserService(UserRepository userRepository,
-                       ApplicationEventPublisher applicationEventPublisher) {
+                       ApplicationEventPublisher applicationEventPublisher,
+                       IdentityProvider identityProvider) {
         this.userRepository = userRepository;
         this.applicationEventPublisher = applicationEventPublisher;
+        this.identityProvider = identityProvider;
     }
 
     public void register(String firstName,
                          String lastName,
-                         String email) {
+                         String email,
+                         String password) {
 
         if (userRepository.existsByEmail(email)) {
             throw new EmailAlreadyRegisteredException("Email is already registered!");
         }
 
-        User user = new User(firstName, lastName, email);
+        UUID keycloakUserId =
+                identityProvider.createUser(firstName, lastName, email, password);
+
+        User user = new User(firstName, lastName, email, keycloakUserId);
 
         userRepository.save(user);
 
@@ -42,8 +50,8 @@ public class UserService {
         applicationEventPublisher.publishEvent(userRegisteredEvent);
     }
 
-    public UserInfo getUserInfoByUuid(UUID uuid) {
-        User user = userRepository.getUserByUuid(uuid);
+    public UserInfo getUserInfoByKeycloakId(UUID uuid) {
+        User user = userRepository.getUserByKeycloakId(uuid);
 
         return new UserInfo(
                 user.getFirstName(),

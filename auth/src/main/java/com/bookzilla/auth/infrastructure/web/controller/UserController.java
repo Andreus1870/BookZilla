@@ -12,7 +12,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/user")
-@SecurityRequirement(name = "bearerAuth")
 public class UserController {
 
     private final UserService userService;
@@ -21,10 +20,11 @@ public class UserController {
         this.userService = userService;
     }
 
+    @SecurityRequirement(name = "oauth2")
     @GetMapping("/me")
     public UserInfo getUserInfo(Authentication authentication){
-        UUID userId = UUID.fromString(authentication.getName());
+        UUID keycloakUserId = UUID.fromString(authentication.getName());
 
-        return userService.getUserInfoByUuid(userId);
+        return userService.getUserInfoByKeycloakId(keycloakUserId);
     }
 }

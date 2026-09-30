@@ -22,6 +22,8 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
+    implementation("org.keycloak:keycloak-admin-client:26.0.12")
+
     implementation(project(":contracts"))
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
