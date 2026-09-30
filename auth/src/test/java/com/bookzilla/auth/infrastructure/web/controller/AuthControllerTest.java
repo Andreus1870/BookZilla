@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class UserControllerTest {
+public class AuthControllerTest {
 
     @Mock
     private UserService userService;

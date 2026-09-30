@@ -23,7 +23,7 @@ public class JpaUserRepositoryAdapterTest {
     private JpaUserRepositoryAdapter jpaUserRepositoryAdapter;
 
     @Test
-    void shouldSave(){
+    void shouldDelegateSaveToJpaRepository(){
 
         // arrange
         User user = new User(
