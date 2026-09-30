@@ -1,4 +1,4 @@
-.gradle
+.gradle/
 **/build/
 !**/src/**/build/
 
@@ -22,3 +22,6 @@ gradle-app.setting
 # OS
 .DS_Store
 Thumbs.db
+
+# env
+.env

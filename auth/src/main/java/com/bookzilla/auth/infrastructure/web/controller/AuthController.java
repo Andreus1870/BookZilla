@@ -1,28 +1,28 @@
-package com.bookzilla.auth.infrastructure.web;
+package com.bookzilla.auth.infrastructure.web.controller;
 
 import com.bookzilla.auth.application.service.UserService;
 import com.bookzilla.auth.infrastructure.web.dto.RegisterRequest;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class UserController {
+@RequestMapping("/api/auth")
+public class AuthController {
 
     private final UserService userService;
 
-    @Autowired
-    public UserController(UserService userService) {
+    public AuthController(UserService userService) {
         this.userService = userService;
     }
 
-    @PostMapping("/api/auth/register")
+    @PostMapping("/register")
     public void register(@Valid @RequestBody RegisterRequest registerRequest){
         userService.register(registerRequest.firstName(),
                             registerRequest.lastName(),
-                            registerRequest.password(),
-                            registerRequest.email());
+                            registerRequest.email(),
+                            registerRequest.password());
     }
 }

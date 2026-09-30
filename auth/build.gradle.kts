@@ -14,10 +14,15 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
 
     implementation("org.postgresql:postgresql")
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-database-postgresql")
+
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+
+    implementation("org.keycloak:keycloak-admin-client:26.0.12")
 
     implementation(project(":contracts"))
 
