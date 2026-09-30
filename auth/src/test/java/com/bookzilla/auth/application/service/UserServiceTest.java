@@ -11,6 +11,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.UUID;
@@ -65,6 +66,30 @@ public class UserServiceTest {
         assertThat(savedUser.getKeycloakId()).isEqualTo(keycloakId);
 
         verify(applicationEventPublisher).publishEvent(any(UserRegistered.class));
+    }
+
+    @Test
+    void shouldNotSaveUserWhenIdentityCreationFails() {
+        // arrange
+        String firstName = "John";
+        String lastName = "Doe";
+        String password = "password123";
+        String email = "john@example.com";
+
+        when(userRepository.existsByEmail(email)).thenReturn(false);
+        when(identityProvider.createIdentity(firstName, lastName, email, password))
+                .thenThrow(new RuntimeException("Identity creation failed"));
+
+
+        // act and assert
+        assertThrows(
+                RuntimeException.class,
+                () -> userService.register(firstName, lastName, email, password)
+        );
+
+        verify(userRepository, never()).save(any(User.class));
+        verify(applicationEventPublisher, never()).publishEvent(any());
+
     }
 
 
