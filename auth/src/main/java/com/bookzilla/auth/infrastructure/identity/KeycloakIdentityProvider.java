@@ -5,6 +5,7 @@ import com.bookzilla.auth.application.port.out.IdentityProvider;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,7 @@ public class KeycloakIdentityProvider implements IdentityProvider {
     }
 
     @Override
-    public UUID createUser(
+    public UUID createIdentity(
             String firstName,
             String lastName,
             String email,
@@ -58,9 +59,26 @@ public class KeycloakIdentityProvider implements IdentityProvider {
 
             String location = response.getHeaderString("Location");
 
-            return UUID.fromString(
+            UUID keycloakUserId = UUID.fromString(
                     location.substring(location.lastIndexOf('/') + 1)
             );
+
+            RoleRepresentation userRole =
+                    keycloak
+                            .realm(keycloakRealm)
+                            .roles()
+                            .get("USER")
+                            .toRepresentation();
+
+            keycloak
+                    .realm(keycloakRealm)
+                    .users()
+                    .get(keycloakUserId.toString())
+                    .roles()
+                    .realmLevel()
+                    .add(List.of(userRole));
+
+            return keycloakUserId;
         }
     }
 }

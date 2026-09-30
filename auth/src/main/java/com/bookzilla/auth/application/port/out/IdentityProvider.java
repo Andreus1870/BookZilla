@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public interface IdentityProvider {
 
-    UUID createUser(
+    UUID createIdentity(
             String firstName,
             String lastName,
             String email,

@@ -38,7 +38,7 @@ public class UserService {
         }
 
         UUID keycloakUserId =
-                identityProvider.createUser(firstName, lastName, email, password);
+                identityProvider.createIdentity(firstName, lastName, email, password);
 
         User user = new User(firstName, lastName, email, keycloakUserId);
 
