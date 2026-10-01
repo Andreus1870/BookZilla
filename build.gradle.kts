@@ -2,7 +2,7 @@ plugins {
     id("org.springframework.boot") version "3.5.5"
     id("io.spring.dependency-management") version "1.1.7"
     java
-    idea   // ← ДОДАНО
+    idea
 }
 
 group = "com.bookzilla"
@@ -31,7 +31,7 @@ dependencies {
 subprojects {
     apply(plugin = "java")
     apply(plugin = "io.spring.dependency-management")
-    apply(plugin = "idea")   // ← ДОДАТИ ДЛЯ SUBPROJECTS
+    apply(plugin = "idea")
 
     group = "com.bookzilla"
 
