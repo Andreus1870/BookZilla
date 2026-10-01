@@ -55,6 +55,7 @@ public class UserServiceTest {
 
         // assert
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        ArgumentCaptor<UserRegistered> eventCaptor = ArgumentCaptor.forClass(UserRegistered.class);
 
         verify(identityProvider).createIdentity(
                 firstName, lastName, email, password
@@ -68,7 +69,11 @@ public class UserServiceTest {
         assertThat(savedUser.getEmail()).isEqualTo(email);
         assertThat(savedUser.getKeycloakId()).isEqualTo(keycloakId);
 
-        verify(applicationEventPublisher).publishEvent(any(UserRegistered.class));
+
+        verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
+        UserRegistered sentEvent = eventCaptor.getValue();
+        assertThat(sentEvent.userId()).isEqualTo(savedUser.getId());
+
     }
 
 
