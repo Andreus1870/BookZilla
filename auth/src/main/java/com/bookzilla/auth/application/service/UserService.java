@@ -1,6 +1,7 @@
 package com.bookzilla.auth.application.service;
 
 import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
+import com.bookzilla.auth.application.exception.UserNotFoundException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.User;
@@ -10,6 +11,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -53,8 +55,14 @@ public class UserService {
     }
 
 
-    public UserInfo getUserInfoByKeycloakId(UUID uuid) {
-        User user = userRepository.getUserByKeycloakId(uuid);
+    public UserInfo getUserInfoByKeycloakId(UUID keycloakId) {
+
+        User user = userRepository.getUserByKeycloakId(keycloakId)
+                .orElseThrow(() ->
+                        new UserNotFoundException(
+                                "User not found by Keycloak ID: " + keycloakId
+                        )
+                );
 
         return new UserInfo(
                 user.getFirstName(),
