@@ -4,6 +4,7 @@ import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.User;
+import com.bookzilla.auth.infrastructure.web.dto.UserInfo;
 import com.bookzilla.contracts.event.UserRegistered;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,9 +12,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,6 +34,7 @@ public class UserServiceTest {
 
     @InjectMocks
     private UserService userService;
+
 
     @Test
     void shouldRegisterUserSuccessfully(){
@@ -67,6 +69,7 @@ public class UserServiceTest {
 
         verify(applicationEventPublisher).publishEvent(any(UserRegistered.class));
     }
+
 
     @Test
     void shouldNotSaveUserWhenIdentityCreationFails() {
@@ -110,6 +113,41 @@ public class UserServiceTest {
         );
         verify(userRepository, never()).save(any(User.class));
         verify(applicationEventPublisher, never()).publishEvent(any());
+    }
+
+
+    @Test
+    void shouldGetUserInfoByKeycloakId() {
+
+        // arrange
+        UUID userId = UUID.randomUUID();
+
+        User user = new User(
+                "John",
+                "Doe",
+                "john@example.com",
+                userId
+        );
+
+        UserInfo userInfo = new UserInfo(
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                null,
+                null,
+                null,
+                user.getRegistrationDate().toString()
+        );
+
+        when(userRepository.getUserByKeycloakId(userId)).thenReturn(user);
+
+
+        // act
+        UserInfo result = userService.getUserInfoByKeycloakId(userId);
+
+        // assert
+        verify(userRepository).getUserByKeycloakId(userId);
+        assertThat(result).isEqualTo(userInfo);
     }
 
 }
