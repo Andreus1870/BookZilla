@@ -17,11 +17,13 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class JpaUserRepositoryAdapterTest {
 
+
     @Mock
     private JpaUserRepository jpaUserRepository;
 
     @InjectMocks
     private JpaUserRepositoryAdapter jpaUserRepositoryAdapter;
+
 
     @Test
     void shouldDelegateSaveToJpaRepository(){
@@ -43,6 +45,7 @@ public class JpaUserRepositoryAdapterTest {
         assertThat(result).isSameAs(user);
     }
 
+
     @Test
     void shouldFindUserByKeycloakId() {
         // arrange
@@ -63,6 +66,25 @@ public class JpaUserRepositoryAdapterTest {
         assertThat(result).containsSame(user);
     }
 
+
+    @Test
+    void shouldReturnEmptyWhenUserNotFoundByKeycloakId() {
+
+        // arrange
+        UUID keycloakId = UUID.randomUUID();
+
+        when(jpaUserRepository.getUserByKeycloakId(keycloakId)).thenReturn(Optional.empty());
+
+        // act
+        Optional<User> result = jpaUserRepositoryAdapter.getUserByKeycloakId(keycloakId);
+
+        // assert
+        verify(jpaUserRepository).getUserByKeycloakId(keycloakId);
+        assertThat(result).isEmpty();
+
+    }
+
+
     @Test
     void shouldCheckIfEmailExists() {
         // arrange
@@ -78,6 +100,7 @@ public class JpaUserRepositoryAdapterTest {
         verify(jpaUserRepository).existsByEmail(email);
         assertThat(result).isSameAs(doesExist);
     }
+
 
     @Test
     void shouldFindUserByEmail() {
@@ -100,6 +123,7 @@ public class JpaUserRepositoryAdapterTest {
         assertThat(result).isPresent();
         assertThat(result.get()).isSameAs(user);
     }
+
 
     @Test
     void shouldReturnEmptyWhenUserNotFoundByEmail() {
