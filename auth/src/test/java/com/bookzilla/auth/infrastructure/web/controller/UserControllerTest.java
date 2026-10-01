@@ -51,8 +51,8 @@ public class UserControllerTest {
 
         //assert
         verify(authentication).getName();
-        verify(userService.getUserInfoByKeycloakId(keycloakId));
-        assertThat(result).isSameAs(userInfo);
+        verify(userService).getUserInfoByKeycloakId(keycloakId);
+        assertThat(result).isEqualTo(userInfo);
 
 
     }
