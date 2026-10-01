@@ -1,6 +1,7 @@
 package com.bookzilla.auth.application.service;
 
 import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
+import com.bookzilla.auth.application.exception.UserNotFoundException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.User;
@@ -148,6 +149,27 @@ public class UserServiceTest {
         // assert
         verify(userRepository).getUserByKeycloakId(keycloakId);
         assertThat(result).isEqualTo(userInfo);
+    }
+
+
+    @Test
+    void shouldThrowExceptionForNotFoundUser() {
+
+        // arrange
+        UUID keycloakId = UUID.randomUUID();
+
+        Optional<User> optionalUser = Optional.empty();
+
+        when(userRepository.getUserByKeycloakId(keycloakId)).thenReturn(optionalUser);
+
+        // act and assert
+        UserNotFoundException exception = assertThrows(
+                UserNotFoundException.class,
+                () -> userService.getUserInfoByKeycloakId(keycloakId)
+        );
+
+        assertThat(exception.getMessage())
+                .isEqualTo("User not found by Keycloak ID: " + keycloakId);
     }
 
 }
