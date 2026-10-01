@@ -100,4 +100,21 @@ public class JpaUserRepositoryAdapterTest {
         assertThat(result).isPresent();
         assertThat(result.get()).isSameAs(user);
     }
+
+    @Test
+    void shouldReturnEmptyWhenUserNotFoundByEmail() {
+
+        // arrange
+        String email = "john@example.com";
+
+        when(jpaUserRepository.findByEmailIgnoreCase(email)).thenReturn(Optional.empty());
+
+        // act
+        Optional<User> result = jpaUserRepositoryAdapter.findByEmail(email);
+
+        // assert
+        verify(jpaUserRepository).findByEmailIgnoreCase(email);
+        assertThat(result).isEmpty();
+
+    }
 }
