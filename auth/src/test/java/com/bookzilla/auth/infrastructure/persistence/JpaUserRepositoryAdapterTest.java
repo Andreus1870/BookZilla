@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -40,5 +41,63 @@ public class JpaUserRepositoryAdapterTest {
         // assert
         verify(jpaUserRepository).save(user);
         assertThat(result).isSameAs(user);
+    }
+
+    @Test
+    void shouldFindUserByKeycloakId() {
+        // arrange
+        UUID keycloakId = UUID.randomUUID();
+        User user = new User(
+                "John",
+                "Doe",
+                "john@example.com",
+                keycloakId);
+
+        when(jpaUserRepository.getUserByKeycloakId(keycloakId)).thenReturn(user);
+
+        // act
+        User result = jpaUserRepositoryAdapter.getUserByKeycloakId(keycloakId);
+
+        // assert
+        verify(jpaUserRepository).getUserByKeycloakId(keycloakId);
+        assertThat(result).isSameAs(user);
+    }
+
+    @Test
+    void shouldCheckIfEmailExists() {
+        // arrange
+        String email = "user@example.com";
+        boolean doesExist = true;
+
+        when(jpaUserRepository.existsByEmail(email)).thenReturn(doesExist);
+
+        // act
+        boolean result = jpaUserRepositoryAdapter.existsByEmail(email);
+
+        // assert
+        verify(jpaUserRepository).existsByEmail(email);
+        assertThat(result).isSameAs(doesExist);
+    }
+
+    @Test
+    void shouldFindUserByEmail() {
+
+        // arrange
+        String email = "user@example.com";
+        User user = new User(
+                "John",
+                "Doe",
+                "user@example.com",
+                UUID.randomUUID());
+
+        when(jpaUserRepository.findByEmailIgnoreCase(email)).thenReturn(Optional.of(user));
+
+        // act
+        Optional<User> result = jpaUserRepositoryAdapter.findByEmail(email);
+
+        // assert
+        verify(jpaUserRepository).findByEmailIgnoreCase(email);
+        assertThat(result).isPresent();
+        assertThat(result.get()).isSameAs(user);
     }
 }
