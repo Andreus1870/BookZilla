@@ -120,13 +120,13 @@ public class UserServiceTest {
     void shouldGetUserInfoByKeycloakId() {
 
         // arrange
-        UUID userId = UUID.randomUUID();
+        UUID keycloakId = UUID.randomUUID();
 
         User user = new User(
                 "John",
                 "Doe",
                 "john@example.com",
-                userId
+                keycloakId
         );
 
         UserInfo userInfo = new UserInfo(
@@ -139,14 +139,14 @@ public class UserServiceTest {
                 user.getRegistrationDate().toString()
         );
 
-        when(userRepository.getUserByKeycloakId(userId)).thenReturn(user);
+        when(userRepository.getUserByKeycloakId(keycloakId)).thenReturn(Optional.of(user));
 
 
         // act
-        UserInfo result = userService.getUserInfoByKeycloakId(userId);
+        UserInfo result = userService.getUserInfoByKeycloakId(keycloakId);
 
         // assert
-        verify(userRepository).getUserByKeycloakId(userId);
+        verify(userRepository).getUserByKeycloakId(keycloakId);
         assertThat(result).isEqualTo(userInfo);
     }
 

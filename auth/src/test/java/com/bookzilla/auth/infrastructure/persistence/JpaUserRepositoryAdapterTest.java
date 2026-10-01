@@ -53,14 +53,14 @@ public class JpaUserRepositoryAdapterTest {
                 "john@example.com",
                 keycloakId);
 
-        when(jpaUserRepository.getUserByKeycloakId(keycloakId)).thenReturn(user);
+        when(jpaUserRepository.getUserByKeycloakId(keycloakId)).thenReturn(Optional.of(user));
 
         // act
-        User result = jpaUserRepositoryAdapter.getUserByKeycloakId(keycloakId);
+        Optional<User> result = jpaUserRepositoryAdapter.getUserByKeycloakId(keycloakId);
 
         // assert
         verify(jpaUserRepository).getUserByKeycloakId(keycloakId);
-        assertThat(result).isSameAs(user);
+        assertThat(result).containsSame(user);
     }
 
     @Test
