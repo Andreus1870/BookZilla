@@ -11,6 +11,7 @@ on:
     branches:
       - main
       - feature/auth-login-logout
+      - feature/auth/login-test
 
 jobs:
   qodana:

@@ -23,16 +23,6 @@ public class JpaUserRepositoryAdapter implements UserRepository {
     }
 
     @Override
-    public Optional<User> findById(Long id) {
-        return jpaUserRepository.findById(id);
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        jpaUserRepository.deleteById(id);
-    }
-
-    @Override
     public boolean existsByEmail(String email) {
         return jpaUserRepository.existsByEmail(email);
     }

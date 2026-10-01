@@ -1,8 +1,8 @@
-package com.bookzilla.auth.infrastructure.web;
+package com.bookzilla.auth.infrastructure.web.controller;
 
 import com.bookzilla.auth.application.service.UserService;
-import com.bookzilla.auth.infrastructure.web.controller.AuthController;
 import com.bookzilla.auth.infrastructure.web.dto.RegisterRequest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class UserControllerTest {
+public class AuthControllerTest {
 
     @Mock
     private UserService userService;
@@ -19,12 +19,14 @@ public class UserControllerTest {
     @InjectMocks
     private AuthController authController;
 
-    void shouldRegister() {
+    @Test
+    void shouldDelegateRegistrationToUserService() {
         //arrange
         RegisterRequest registerRequest = new RegisterRequest(
                 "user",
                 "green",
-                "email@example.com"
+                "email@example.com",
+                "123456789"
         );
 
         //act
@@ -34,7 +36,8 @@ public class UserControllerTest {
         verify(userService).register(
                 "user",
                 "green",
-                "email@example.com"
+                "email@example.com",
+                "123456789"
         );
     }
 }

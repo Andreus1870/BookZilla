@@ -8,8 +8,6 @@ import java.util.UUID;
 
 public interface UserRepository {
     User save(User user);
-    Optional<User> findById(Long id);
-    void deleteById(Long id);
     boolean existsByEmail(String email);
     Optional<User> findByEmail(String email);
     User getUserByKeycloakId(UUID keycloakId);

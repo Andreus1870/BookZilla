@@ -20,6 +20,7 @@ public class UserService {
     private final ApplicationEventPublisher applicationEventPublisher;
     private final IdentityProvider identityProvider;
 
+
     public UserService(UserRepository userRepository,
                        ApplicationEventPublisher applicationEventPublisher,
                        IdentityProvider identityProvider) {
@@ -27,6 +28,7 @@ public class UserService {
         this.applicationEventPublisher = applicationEventPublisher;
         this.identityProvider = identityProvider;
     }
+
 
     public void register(String firstName,
                          String lastName,
@@ -49,6 +51,7 @@ public class UserService {
 
         applicationEventPublisher.publishEvent(userRegisteredEvent);
     }
+
 
     public UserInfo getUserInfoByKeycloakId(UUID uuid) {
         User user = userRepository.getUserByKeycloakId(uuid);

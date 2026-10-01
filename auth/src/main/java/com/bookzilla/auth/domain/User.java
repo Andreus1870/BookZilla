@@ -103,4 +103,8 @@ public class User {
     public Instant getRegistrationDate() {
         return registrationDate;
     }
+
+    public UUID getKeycloakId() {
+        return keycloakId;
+    }
 }

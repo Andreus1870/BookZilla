@@ -3,6 +3,7 @@ package com.bookzilla.auth.infrastructure.identity;
 import com.bookzilla.auth.application.exception.KeycloakUserCreationException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import jakarta.ws.rs.core.Response;
+import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
@@ -57,10 +58,8 @@ public class KeycloakIdentityProvider implements IdentityProvider {
                 );
             }
 
-            String location = response.getHeaderString("Location");
-
             UUID keycloakUserId = UUID.fromString(
-                    location.substring(location.lastIndexOf('/') + 1)
+                    CreatedResponseUtil.getCreatedId(response)
             );
 
             RoleRepresentation userRole =
