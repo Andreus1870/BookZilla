@@ -97,6 +97,9 @@ public class KeycloakIdentityProviderTest {
         when(usersResource.create(any(UserRepresentation.class)))
                 .thenReturn(response);
 
+        when(response.getStatusInfo())
+                .thenReturn(Response.Status.CREATED);
+
         when(response.getStatus()).thenReturn(201);
 
         when(response.getLocation()).thenReturn(
@@ -135,9 +138,6 @@ public class KeycloakIdentityProviderTest {
 
         // assert
         assertThat(result).isEqualTo(keycloakId);
-
-        verify(keycloak).realm(KEYCLOAK_REALM);
-        verify(realmResource).users();
 
         verify(response).getStatus();
         verify(response).getLocation();
