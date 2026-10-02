@@ -1,6 +1,7 @@
 package com.bookzilla.auth.application.service;
 
 import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
+import com.bookzilla.auth.application.exception.UserNotFoundException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.User;
@@ -54,6 +55,7 @@ public class UserServiceTest {
 
         // assert
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        ArgumentCaptor<UserRegistered> eventCaptor = ArgumentCaptor.forClass(UserRegistered.class);
 
         verify(identityProvider).createIdentity(
                 firstName, lastName, email, password
@@ -67,7 +69,11 @@ public class UserServiceTest {
         assertThat(savedUser.getEmail()).isEqualTo(email);
         assertThat(savedUser.getKeycloakId()).isEqualTo(keycloakId);
 
-        verify(applicationEventPublisher).publishEvent(any(UserRegistered.class));
+
+        verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
+        UserRegistered sentEvent = eventCaptor.getValue();
+        assertThat(sentEvent.userId()).isEqualTo(savedUser.getId());
+
     }
 
 
@@ -120,13 +126,13 @@ public class UserServiceTest {
     void shouldGetUserInfoByKeycloakId() {
 
         // arrange
-        UUID userId = UUID.randomUUID();
+        UUID keycloakId = UUID.randomUUID();
 
         User user = new User(
                 "John",
                 "Doe",
                 "john@example.com",
-                userId
+                keycloakId
         );
 
         UserInfo userInfo = new UserInfo(
@@ -139,15 +145,36 @@ public class UserServiceTest {
                 user.getRegistrationDate().toString()
         );
 
-        when(userRepository.getUserByKeycloakId(userId)).thenReturn(user);
+        when(userRepository.getUserByKeycloakId(keycloakId)).thenReturn(Optional.of(user));
 
 
         // act
-        UserInfo result = userService.getUserInfoByKeycloakId(userId);
+        UserInfo result = userService.getUserInfoByKeycloakId(keycloakId);
 
         // assert
-        verify(userRepository).getUserByKeycloakId(userId);
+        verify(userRepository).getUserByKeycloakId(keycloakId);
         assertThat(result).isEqualTo(userInfo);
+    }
+
+
+    @Test
+    void shouldThrowExceptionForNotFoundUser() {
+
+        // arrange
+        UUID keycloakId = UUID.randomUUID();
+
+        Optional<User> optionalUser = Optional.empty();
+
+        when(userRepository.getUserByKeycloakId(keycloakId)).thenReturn(optionalUser);
+
+        // act and assert
+        UserNotFoundException exception = assertThrows(
+                UserNotFoundException.class,
+                () -> userService.getUserInfoByKeycloakId(keycloakId)
+        );
+
+        assertThat(exception.getMessage())
+                .isEqualTo("User not found by Keycloak ID: " + keycloakId);
     }
 
 }
