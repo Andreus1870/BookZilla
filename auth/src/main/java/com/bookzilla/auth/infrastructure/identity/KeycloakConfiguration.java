@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class KeycloakConfiguration {
 
+    //todo externalize configuration
     @Bean
     public Keycloak keycloak(){
         return KeycloakBuilder.builder()

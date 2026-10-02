@@ -20,6 +20,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public void register(@Valid @RequestBody RegisterRequest registerRequest){
+
         userService.register(registerRequest.firstName(),
                             registerRequest.lastName(),
                             registerRequest.email(),
