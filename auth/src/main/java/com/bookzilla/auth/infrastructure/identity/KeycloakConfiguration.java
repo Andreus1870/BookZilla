@@ -2,21 +2,29 @@ package com.bookzilla.auth.infrastructure.identity;
 
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@EnableConfigurationProperties(KeycloakAdminProperties.class)
 public class KeycloakConfiguration {
 
-    //todo externalize configuration
+    private final KeycloakAdminProperties keycloakAdminProperties;
+
+    public KeycloakConfiguration(KeycloakAdminProperties keycloakAdminProperties) {
+        this.keycloakAdminProperties = keycloakAdminProperties;
+    }
+
     @Bean
-    public Keycloak keycloak(){
+    public Keycloak keycloak() {
+
         return KeycloakBuilder.builder()
-                .serverUrl("http://localhost:8081")
-                .realm("master")
-                .username("admin")
-                .password("admin")
-                .clientId("admin-cli")
+                .serverUrl(keycloakAdminProperties.serverUrl())
+                .realm(keycloakAdminProperties.realm())
+                .username(keycloakAdminProperties.username())
+                .password(keycloakAdminProperties.password())
+                .clientId(keycloakAdminProperties.clientId())
                 .build();
     }
 }
