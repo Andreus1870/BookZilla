@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -60,9 +61,15 @@ public class KeycloakIdentityProvider implements IdentityProvider {
                 );
             }
 
-            return UUID.fromString(
-                    CreatedResponseUtil.getCreatedId(response)
-            );
+            String createdId = CreatedResponseUtil.getCreatedId(response);
+
+            if (createdId == null) {
+                throw new KeycloakUserCreationException(
+                        "Keycloak did not return an ID for the created user"
+                );
+            }
+
+            return UUID.fromString(createdId);
 
         }
     }
