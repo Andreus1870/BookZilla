@@ -1,5 +1,6 @@
 package com.bookzilla.auth.infrastructure.identity;
 
+import com.bookzilla.auth.application.exception.KeycloakUserCreationException;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,9 +25,9 @@ import java.util.UUID;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class KeycloakIdentityProviderTest {
@@ -175,5 +176,39 @@ public class KeycloakIdentityProviderTest {
         assertThat(credential.isTemporary())
                 .isFalse();
 
+    }
+
+
+    @Test
+    void shouldThrowExceptionWhenKeycloakUserCreationFails() {
+        // arrange
+        String firstName = "John";
+        String lastName = "Doe";
+        String email = "john@example.com";
+        String password = "123456789";
+
+        when(keycloak.realm(KEYCLOAK_REALM))
+                .thenReturn(realmResource);
+
+        when(realmResource.users())
+                .thenReturn(usersResource);
+
+        when(usersResource.create(any(UserRepresentation.class)))
+                .thenReturn(response);
+
+        when(response.getStatus()).thenReturn(401);
+
+
+        //act and assert
+        assertThrows(
+            KeycloakUserCreationException.class,
+                () -> keycloakIdentityProvider.createIdentity(
+                        firstName,
+                        lastName,
+                        email,
+                        password
+                )
+        );
+        verify(realmResource, never()).roles();
     }
 }
