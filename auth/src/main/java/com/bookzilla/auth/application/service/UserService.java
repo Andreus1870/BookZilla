@@ -74,4 +74,21 @@ public class UserService {
                 user.getRegistrationDate().toString()
         );
     }
+
+
+    public void setAdditionalUserInfo(UUID keycloakId,
+                                      String country,
+                                      String city,
+                                      String phone) {
+
+        User user = userRepository.getUserByKeycloakId(keycloakId)
+                .orElseThrow(() ->
+                        new UserNotFoundException(
+                                "User not found by Keycloak ID: " + keycloakId
+                        )
+                );
+
+        user.updateAdditionalInfo(country, city, phone);
+    }
+
 }

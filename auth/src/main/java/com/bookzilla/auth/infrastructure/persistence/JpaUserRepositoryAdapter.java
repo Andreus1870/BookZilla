@@ -36,4 +36,5 @@ public class JpaUserRepositoryAdapter implements UserRepository {
     public Optional<User> getUserByKeycloakId(UUID userId){
         return jpaUserRepository.getUserByKeycloakId(userId);
     }
+
 }

@@ -107,4 +107,12 @@ public class User {
     public UUID getKeycloakId() {
         return keycloakId;
     }
+
+    public void updateAdditionalInfo(String country,
+                                     String city,
+                                     String phone) {
+        this.country = country;
+        this.city = city;
+        this.phone = phone;
+    }
 }
