@@ -7,10 +7,10 @@ public record SetAdditionalInfoRequest(
         @Size(max = 32)
         String phone,
 
-        @Size(max = 32)
+        @Size(max = 100)
         String country,
 
-        @Size(max = 32)
+        @Size(max = 100)
         String city
 ) {
 }
