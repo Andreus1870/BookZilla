@@ -211,4 +211,46 @@ public class KeycloakIdentityProviderTest {
         );
         verify(realmResource, never()).roles();
     }
+
+
+    @Test
+    void shouldThrowExceptionWhenCreatedUserIdIsMissing() {
+        // arrange
+        String firstName = "John";
+        String lastName = "Doe";
+        String email = "john@example.com";
+        String password = "123456789";
+
+
+        when(keycloak.realm(KEYCLOAK_REALM))
+                .thenReturn(realmResource);
+
+        when(realmResource.users())
+                .thenReturn(usersResource);
+
+        when(usersResource.create(any(UserRepresentation.class)))
+                .thenReturn(response);
+
+        when(response.getStatusInfo())
+                .thenReturn(Response.Status.CREATED);
+
+        when(response.getStatus()).thenReturn(201);
+
+        when(response.getLocation()).thenReturn(null);
+
+
+        //act and assert
+        KeycloakUserCreationException exception = assertThrows(
+                KeycloakUserCreationException.class,
+                () -> keycloakIdentityProvider.createIdentity(
+                        firstName,
+                        lastName,
+                        email,
+                        password
+                )
+        );
+
+        assertThat(exception.getMessage())
+                .isEqualTo("Keycloak did not return an ID for the created user");
+    }
 }
