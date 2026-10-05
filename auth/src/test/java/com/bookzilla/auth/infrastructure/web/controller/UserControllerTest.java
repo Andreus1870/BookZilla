@@ -1,6 +1,7 @@
 package com.bookzilla.auth.infrastructure.web.controller;
 
 import com.bookzilla.auth.application.service.UserService;
+import com.bookzilla.auth.infrastructure.web.dto.SetAdditionalInfoRequest;
 import com.bookzilla.auth.infrastructure.web.dto.UserInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,5 +56,33 @@ public class UserControllerTest {
         assertThat(result).isEqualTo(userInfo);
 
 
+    }
+
+
+    @Test
+    void shouldSetAdditionalUserInfo() {
+        // arrange
+        UUID keycloakId = UUID.randomUUID();
+
+        String country = "Ukraine";
+        String city = "Lviv";
+        String phone = "+380123456789";
+
+        SetAdditionalInfoRequest request =
+                new SetAdditionalInfoRequest(phone, country, city);
+
+        when(authentication.getName()).thenReturn(String.valueOf(keycloakId));
+
+        // act
+        userController.setAdditionalUserInfo(authentication, request);
+
+        // assert
+        verify(authentication).getName();
+        verify(userService).setAdditionalUserInfo(
+                keycloakId,
+                country,
+                city,
+                phone
+        );
     }
 }
