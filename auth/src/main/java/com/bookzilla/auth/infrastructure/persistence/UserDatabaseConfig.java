@@ -21,22 +21,22 @@ import javax.sql.DataSource;
 @Configuration
 @EnableJpaRepositories(
         basePackages = "com.bookzilla.auth.infrastructure.persistence",
-        entityManagerFactoryRef = "authEntityManagerFactory",
-        transactionManagerRef = "authTransactionManager"
+        entityManagerFactoryRef = "userEntityManagerFactory",
+        transactionManagerRef = "userTransactionManager"
 )
-public class AuthDatabaseConfig {
+public class UserDatabaseConfig {
 
     @Bean
     @Primary
-    @ConfigurationProperties("auth.datasource")
-    public DataSourceProperties authDataSourceProperties() {
+    @ConfigurationProperties("user.datasource")
+    public DataSourceProperties userDataSourceProperties() {
         return new DataSourceProperties();
     }
 
     @Bean
     @Primary
-    public DataSource authDataSource(
-            @Qualifier("authDataSourceProperties") DataSourceProperties properties) {
+    public DataSource userDataSource(
+            @Qualifier("userDataSourceProperties") DataSourceProperties properties) {
 
         return properties
                 .initializeDataSourceBuilder()
@@ -45,32 +45,32 @@ public class AuthDatabaseConfig {
     }
 
     @Bean(initMethod = "migrate")
-    public Flyway authFlyway(
-            @Qualifier("authDataSource") DataSource dataSource) {
+    public Flyway userFlyway(
+            @Qualifier("userDataSource") DataSource dataSource) {
 
         return Flyway.configure()
                 .dataSource(dataSource)
-                .locations("classpath:db/migration/auth")
+                .locations("classpath:db/migration/user")
                 .load();
     }
 
     @Bean
     @Primary
-    public LocalContainerEntityManagerFactoryBean authEntityManagerFactory(
+    public LocalContainerEntityManagerFactoryBean userEntityManagerFactory(
             EntityManagerFactoryBuilder builder,
-            @Qualifier("authDataSource") DataSource dataSource) {
+            @Qualifier("userDataSource") DataSource dataSource) {
 
         return builder
                 .dataSource(dataSource)
                 .packages(User.class)
-                .persistenceUnit("auth")
+                .persistenceUnit("user")
                 .build();
     }
 
     @Bean
     @Primary
-    public PlatformTransactionManager authTransactionManager(
-            @Qualifier("authEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
+    public PlatformTransactionManager userTransactionManager(
+            @Qualifier("userEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
 
         return new JpaTransactionManager(entityManagerFactory);
     }

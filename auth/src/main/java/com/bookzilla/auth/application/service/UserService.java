@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@Transactional(transactionManager = "authTransactionManager")
+@Transactional(transactionManager = "userTransactionManager")
 public class UserService {
 
     private final UserRepository userRepository;
