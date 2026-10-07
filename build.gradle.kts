@@ -26,6 +26,18 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
     implementation("me.paulschwarz:springboot3-dotenv:5.1.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+    testImplementation("org.testcontainers:testcontainers")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:postgresql")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.boot:spring-boot-dependencies:3.5.5")
+        mavenBom("org.testcontainers:testcontainers-bom:1.21.4")
+    }
 }
 
 subprojects {
@@ -57,6 +69,8 @@ subprojects {
             isDownloadJavadoc = true
         }
     }
+
+
 }
 
 idea {
