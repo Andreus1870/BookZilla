@@ -1,4 +1,4 @@
-package com.bookzilla.integration;
+package com.bookzilla.auth.application.service;
 
 import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
 import com.bookzilla.auth.application.exception.UserNotFoundException;
@@ -7,6 +7,7 @@ import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.User;
 import com.bookzilla.auth.infrastructure.web.dto.UserInfo;
 import com.bookzilla.contracts.event.UserRegistered;
+import com.bookzilla.integration.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
