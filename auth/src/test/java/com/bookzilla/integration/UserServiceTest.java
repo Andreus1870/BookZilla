@@ -1,4 +1,4 @@
-package com.bookzilla.auth.application.service;
+package com.bookzilla.integration;
 
 import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
 import com.bookzilla.auth.application.exception.UserNotFoundException;

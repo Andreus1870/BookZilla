@@ -1,4 +1,4 @@
-package com.bookzilla.auth.application.service;
+package com.bookzilla.integration;
 
 
 import org.junit.jupiter.api.Test;
@@ -10,11 +10,12 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 @SpringBootTest
 @Testcontainers
-public class UserServiceIntegrationTest {
+public class UserRegistrationIntegrationTest {
 
     @Container
     @ServiceConnection
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
+    static PostgreSQLContainer<?> postgres =
+            new PostgreSQLContainer<>("postgres:16-alpine");
 
     @Test
     void contextLoads() {

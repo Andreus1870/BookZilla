@@ -1,6 +1,6 @@
 package com.bookzilla.auth.infrastructure.web.controller;
 
-import com.bookzilla.auth.application.service.UserService;
+import com.bookzilla.integration.UserService;
 import com.bookzilla.auth.infrastructure.web.dto.SetAdditionalInfoRequest;
 import com.bookzilla.auth.infrastructure.web.dto.UserInfo;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
