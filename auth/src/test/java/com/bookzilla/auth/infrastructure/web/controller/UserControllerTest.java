@@ -1,6 +1,6 @@
 package com.bookzilla.auth.infrastructure.web.controller;
 
-import com.bookzilla.integration.UserService;
+import com.bookzilla.auth.application.service.UserService;
 import com.bookzilla.auth.infrastructure.web.dto.SetAdditionalInfoRequest;
 import com.bookzilla.auth.infrastructure.web.dto.UserInfo;
 import org.junit.jupiter.api.Test;
