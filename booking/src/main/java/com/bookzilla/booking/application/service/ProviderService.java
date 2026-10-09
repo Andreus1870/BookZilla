@@ -19,4 +19,8 @@ public class ProviderService {
     public Provider createProvider(UUID userId) {
         return providerRepository.save(new Provider(userId));
     }
+
+    public void deleteProvider(UUID providerId){
+        providerRepository.deleteProvider(providerId);
+    }
 }

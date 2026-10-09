@@ -10,4 +10,5 @@ public interface UserRepository {
     boolean existsByEmail(String email);
     Optional<User> findByEmail(String email);
     Optional<User> getUserByKeycloakId(UUID keycloakId);
+    void deleteUserByEmail(String email);
 }

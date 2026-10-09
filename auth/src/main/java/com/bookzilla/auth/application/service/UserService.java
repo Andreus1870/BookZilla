@@ -1,11 +1,13 @@
 package com.bookzilla.auth.application.service;
 
+import com.bookzilla.auth.application.exception.CannotDeleteModeratorException;
 import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
 import com.bookzilla.auth.application.exception.UserNotFoundException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.User;
 import com.bookzilla.auth.infrastructure.web.dto.UserInfo;
+import com.bookzilla.contracts.event.DeleteUserRepresentation;
 import com.bookzilla.contracts.event.UserRegistered;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -24,10 +26,10 @@ public class UserService {
 
     public UserService(UserRepository userRepository,
                        ApplicationEventPublisher applicationEventPublisher,
-                       IdentityProvider identityProvider) {
+                       IdentityProvider keycloakIdentityProvider) {
         this.userRepository = userRepository;
         this.applicationEventPublisher = applicationEventPublisher;
-        this.identityProvider = identityProvider;
+        this.identityProvider = keycloakIdentityProvider;
     }
 
 
@@ -90,4 +92,28 @@ public class UserService {
         user.updateAdditionalInfo(country, city, phone);
     }
 
+
+    public void deleteUser(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new UserNotFoundException(
+                                "User not found by email: " + email
+                        )
+                );
+
+        if (!identityProvider.hasUserRole(email)) {
+            throw new CannotDeleteModeratorException("Moderators cannot delete other moderators");
+        }
+
+        UUID userToDeleteUuid = user.getId();
+
+        userRepository.deleteUserByEmail(email);
+
+        DeleteUserRepresentation deleteUserRepresentationEvent =
+                new DeleteUserRepresentation(userToDeleteUuid);
+
+        applicationEventPublisher.publishEvent(deleteUserRepresentationEvent);
+
+    }
 }

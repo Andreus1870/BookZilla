@@ -19,4 +19,8 @@ public class ClientService {
     public Client createClient(UUID userId) {
         return clientRepository.save(new Client(userId));
     }
+
+    public void deleteClient(UUID clientId){
+        clientRepository.deleteClient(clientId);
+    }
 }

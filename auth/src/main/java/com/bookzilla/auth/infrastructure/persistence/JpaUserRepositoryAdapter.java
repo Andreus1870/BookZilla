@@ -37,4 +37,8 @@ public class JpaUserRepositoryAdapter implements UserRepository {
         return jpaUserRepository.getUserByKeycloakId(userId);
     }
 
+    @Override
+    public void deleteUserByEmail(String email) {
+        jpaUserRepository.deleteUserByEmail(email);
+    }
 }

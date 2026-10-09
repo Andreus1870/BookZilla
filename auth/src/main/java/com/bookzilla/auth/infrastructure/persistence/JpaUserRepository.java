@@ -13,4 +13,6 @@ public interface JpaUserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmailIgnoreCase(String email);
 
     Optional<User> getUserByKeycloakId(UUID keycloakId);
+
+    void deleteUserByEmail(String email);
 }

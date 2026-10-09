@@ -30,7 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class KeycloakIdentityProviderTest {
+public class KeycloakKeycloakIdentityProviderTest {
 
     @Mock
     private Keycloak keycloak;
