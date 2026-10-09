@@ -106,9 +106,11 @@ public class UserService {
             throw new CannotDeleteModeratorException("Moderators cannot delete other moderators");
         }
 
-        UUID userToDeleteUuid = user.getId();
+        identityProvider.deleteKeycloakUserRepresentation(email);
 
         userRepository.deleteUserByEmail(email);
+
+        UUID userToDeleteUuid = user.getId();
 
         DeleteUserRepresentation deleteUserRepresentationEvent =
                 new DeleteUserRepresentation(userToDeleteUuid);

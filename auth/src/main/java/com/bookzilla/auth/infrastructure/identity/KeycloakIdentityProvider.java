@@ -1,6 +1,7 @@
 package com.bookzilla.auth.infrastructure.identity;
 
 import com.bookzilla.auth.application.exception.KeycloakUserCreationException;
+import com.bookzilla.auth.application.exception.KeycloakUserDeletionException;
 import com.bookzilla.auth.application.exception.KeycloakUserRepresentationNotFoundException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import jakarta.ws.rs.core.Response;
@@ -141,6 +142,36 @@ public class KeycloakIdentityProvider implements IdentityProvider {
 
         return roles.stream()
                 .anyMatch(role -> role.getName().equals("USER"));
+
+    }
+
+
+    @Override
+    public void deleteKeycloakUserRepresentation(String email) {
+
+        UserRepresentation user = keycloak.realm(keycloakRealm)
+                .users()
+                .searchByEmail(email, true)
+                .stream()
+                .findFirst()
+                .orElseThrow(() ->
+                        new KeycloakUserRepresentationNotFoundException(
+                                "Keycloak user not found by email: " + email
+                        )
+                );
+
+
+        try (Response response = keycloak.realm(keycloakRealm)
+                .users()
+                .delete(user.getId())) {
+
+            if (response.getStatus() != Response.Status.NO_CONTENT.getStatusCode()) {
+                throw new KeycloakUserDeletionException(
+                        "Failed to delete Keycloak user. HTTP status: "
+                                + response.getStatus()
+                );
+            }
+        }
 
     }
 }

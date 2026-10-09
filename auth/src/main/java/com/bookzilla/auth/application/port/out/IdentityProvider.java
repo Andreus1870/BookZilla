@@ -12,4 +12,6 @@ public interface IdentityProvider {
     );
 
     boolean hasUserRole(String email);
+
+    void deleteKeycloakUserRepresentation(String email);
 }
