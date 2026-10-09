@@ -9,6 +9,7 @@ import com.bookzilla.booking.infrastructure.persistence.client.JpaClientReposito
 import com.bookzilla.booking.infrastructure.persistence.provider.JpaProviderRepository;
 import com.bookzilla.integration.config.BookingDatabaseTestConfiguration;
 import com.bookzilla.integration.config.UserDatabaseTestConfiguration;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,14 +18,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.UUID;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -50,6 +49,14 @@ public class UserRegistrationIntegrationTest {
     private IdentityProvider identityProvider;
 
 
+    @BeforeEach
+    void cleanUp() {
+        jpaClientRepository.deleteAll();
+        jpaProviderRepository.deleteAll();
+        jpaUserRepository.deleteAll();
+    }
+
+
     @Test
     void shouldRegisterUser() throws Exception {
 
@@ -73,8 +80,8 @@ public class UserRegistrationIntegrationTest {
                                     "firstName": "Andrii",
                                     "lastName": "Test",
                                     "email": "andrii@test.com",
-                                    "password": "password123"                            
-                                 }     
+                                    "password": "password123"
+                                 }
                                  """)
                 )
                 .andExpect(status().isOk());
@@ -105,6 +112,64 @@ public class UserRegistrationIntegrationTest {
 
         assertEquals(user.getId(), provider.getId());
         assertEquals(user.getId(), client.getId());
+    }
+
+
+
+    @Test
+    void shouldNotRegisterUserWhenEmailAlreadyExists() throws Exception {
+
+        //arrange
+        UUID keycloakUserId = UUID.randomUUID();
+
+        when(identityProvider.createIdentity(
+                "Andrii",
+                "Test2",
+                "test2@test.com",
+                "test123456"
+        )).thenReturn(keycloakUserId);
+
+        // act and assert
+        mockMvc.perform(
+                        post("/api/auth/register")
+                                .contentType("application/json")
+                                .content("""
+                                 {
+                                    "firstName": "Andrii",
+                                    "lastName": "Test2",
+                                    "email": "test2@test.com",
+                                    "password": "test123456"
+                                 }
+                                 """)
+                )
+                .andExpect(status().isOk());
+
+
+        mockMvc.perform(
+                        post("/api/auth/register")
+                                .contentType("application/json")
+                                .content("""
+
+                                        {
+                                    "firstName": "Andrii",
+                                    "lastName": "Test2",
+                                    "email": "test2@test.com",
+                                    "password": "test123456"
+                                 }
+                                 """)
+                )
+                .andExpect(status().isConflict());
+
+        verify(identityProvider).createIdentity(
+                "Andrii",
+                "Test2",
+                "test2@test.com",
+                "test123456"
+        );
+
+        assertEquals(1, jpaClientRepository.count());
+        assertEquals(1, jpaProviderRepository.count());
+        assertEquals(1, jpaUserRepository.count());
     }
 
 }
