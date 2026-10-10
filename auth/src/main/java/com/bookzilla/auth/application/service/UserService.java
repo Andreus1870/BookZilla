@@ -135,5 +135,15 @@ public class UserService {
                 .toList();
     }
 
+    public UUID getUserKeycloakIdByEmail(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new UserNotFoundException("User not found by email: " + email)
+                );
+
+        return user.getKeycloakId();
+    }
+
 
 }
