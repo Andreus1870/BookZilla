@@ -7,12 +7,14 @@ import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.User;
 import com.bookzilla.auth.infrastructure.web.dto.UserInfo;
+import com.bookzilla.auth.infrastructure.web.dto.UserShortInfo;
 import com.bookzilla.contracts.event.DeleteUserRepresentation;
 import com.bookzilla.contracts.event.UserRegistered;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -118,4 +120,20 @@ public class UserService {
         applicationEventPublisher.publishEvent(deleteUserRepresentationEvent);
 
     }
+
+    public List<UserShortInfo> getAllUsers() {
+
+        List<User> users = userRepository.getAllUsers();
+
+        return users.stream()
+                .map(user -> new UserShortInfo(
+                        user.getEmail(),
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getRegistrationDate()
+                ))
+                .toList();
+    }
+
+
 }

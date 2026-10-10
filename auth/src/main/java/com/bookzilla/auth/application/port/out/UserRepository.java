@@ -2,6 +2,7 @@ package com.bookzilla.auth.application.port.out;
 
 import com.bookzilla.auth.domain.User;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,4 +12,5 @@ public interface UserRepository {
     Optional<User> findByEmail(String email);
     Optional<User> getUserByKeycloakId(UUID keycloakId);
     void deleteUserByEmail(String email);
+    List<User> getAllUsers();
 }

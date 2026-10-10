@@ -5,6 +5,7 @@ import com.bookzilla.auth.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,5 +41,10 @@ public class JpaUserRepositoryAdapter implements UserRepository {
     @Override
     public void deleteUserByEmail(String email) {
         jpaUserRepository.deleteUserByEmail(email);
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return jpaUserRepository.findAll();
     }
 }
