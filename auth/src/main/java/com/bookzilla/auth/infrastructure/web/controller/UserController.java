@@ -2,7 +2,7 @@ package com.bookzilla.auth.infrastructure.web.controller;
 
 import com.bookzilla.auth.application.service.UserService;
 import com.bookzilla.auth.infrastructure.web.dto.SetAdditionalInfoRequest;
-import com.bookzilla.auth.infrastructure.web.dto.UserInfo;
+import com.bookzilla.auth.application.dto.UserInfo;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;

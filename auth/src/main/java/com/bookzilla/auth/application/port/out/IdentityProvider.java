@@ -10,4 +10,8 @@ public interface IdentityProvider {
             String email,
             String password
     );
+
+    boolean hasUserRole(String email);
+
+    void deleteKeycloakUserRepresentation(String email);
 }

@@ -20,10 +20,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -46,7 +47,7 @@ public class UserRegistrationIntegrationTest {
     private JpaClientRepository jpaClientRepository;
 
     @MockitoBean
-    private IdentityProvider identityProvider;
+    private IdentityProvider IdentityProvider;
 
 
     @BeforeEach
@@ -63,7 +64,7 @@ public class UserRegistrationIntegrationTest {
         // arrange
         UUID keycloakUserId = UUID.randomUUID();
 
-        when(identityProvider.createIdentity(
+        when(IdentityProvider.createIdentity(
                 "Andrii",
                 "Test",
                 "andrii@test.com",
@@ -86,7 +87,7 @@ public class UserRegistrationIntegrationTest {
                 )
                 .andExpect(status().isOk());
 
-        verify(identityProvider).createIdentity(
+        verify(IdentityProvider).createIdentity(
                 "Andrii",
                 "Test",
                 "andrii@test.com",
@@ -122,7 +123,7 @@ public class UserRegistrationIntegrationTest {
         //arrange
         UUID keycloakUserId = UUID.randomUUID();
 
-        when(identityProvider.createIdentity(
+        when(IdentityProvider.createIdentity(
                 "Andrii",
                 "Test2",
                 "test2@test.com",
@@ -160,7 +161,7 @@ public class UserRegistrationIntegrationTest {
                 )
                 .andExpect(status().isConflict());
 
-        verify(identityProvider).createIdentity(
+        verify(IdentityProvider).createIdentity(
                 "Andrii",
                 "Test2",
                 "test2@test.com",

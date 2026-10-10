@@ -22,4 +22,9 @@ public class JpaProviderRepositoryAdapter implements ProviderRepository {
     public Provider save(Provider provider) {
         return providerRepository.save(provider);
     }
+
+    @Override
+    public void deleteProvider(UUID providerId) {
+        providerRepository.deleteById(providerId);
+    }
 }
