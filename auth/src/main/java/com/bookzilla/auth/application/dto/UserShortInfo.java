@@ -1,4 +1,4 @@
-package com.bookzilla.auth.infrastructure.web.dto;
+package com.bookzilla.auth.application.dto;
 
 import java.time.Instant;
 

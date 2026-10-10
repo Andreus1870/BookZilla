@@ -2,7 +2,7 @@ package com.bookzilla.auth.infrastructure.web.controller;
 
 import com.bookzilla.auth.application.service.UserService;
 import com.bookzilla.auth.infrastructure.web.dto.DeleteUserRequest;
-import com.bookzilla.auth.infrastructure.web.dto.UserShortInfo;
+import com.bookzilla.auth.application.dto.UserShortInfo;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
