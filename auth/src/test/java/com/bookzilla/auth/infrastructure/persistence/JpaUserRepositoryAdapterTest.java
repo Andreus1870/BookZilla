@@ -116,7 +116,7 @@ public class JpaUserRepositoryAdapterTest {
         when(jpaUserRepository.findByEmailIgnoreCase(email)).thenReturn(Optional.of(user));
 
         // act
-        Optional<User> result = jpaUserRepositoryAdapter.findByEmail(email);
+        Optional<User> result = jpaUserRepositoryAdapter.getUserByEmail(email);
 
         // assert
         verify(jpaUserRepository).findByEmailIgnoreCase(email);
@@ -134,7 +134,7 @@ public class JpaUserRepositoryAdapterTest {
         when(jpaUserRepository.findByEmailIgnoreCase(email)).thenReturn(Optional.empty());
 
         // act
-        Optional<User> result = jpaUserRepositoryAdapter.findByEmail(email);
+        Optional<User> result = jpaUserRepositoryAdapter.getUserByEmail(email);
 
         // assert
         verify(jpaUserRepository).findByEmailIgnoreCase(email);

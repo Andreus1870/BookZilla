@@ -67,15 +67,19 @@ public class UserService {
                         )
                 );
 
-        return new UserInfo(
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getPhone(),
-                user.getCountry(),
-                user.getCity(),
-                user.getRegistrationDate().toString()
-        );
+        return toUserInfo(user);
+    }
+
+    public UserInfo getUserInfoByEmail(String email){
+
+        User user = userRepository.getUserByEmail(email)
+                .orElseThrow(() ->
+                        new UserNotFoundException(
+                                "User not found by email: " + email
+                        )
+                );
+
+        return toUserInfo(user);
     }
 
 
@@ -97,7 +101,7 @@ public class UserService {
 
     public void deleteUser(String email) {
 
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.getUserByEmail(email)
                 .orElseThrow(() ->
                         new UserNotFoundException(
                                 "User not found by email: " + email
@@ -135,15 +139,18 @@ public class UserService {
                 .toList();
     }
 
-    public UUID getUserKeycloakIdByEmail(String email) {
+    private UserInfo toUserInfo(User user) {
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new UserNotFoundException("User not found by email: " + email)
-                );
+        return new UserInfo(
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getPhone(),
+                user.getCountry(),
+                user.getCity(),
+                user.getRegistrationDate().toString()
+        );
 
-        return user.getKeycloakId();
     }
-
 
 }

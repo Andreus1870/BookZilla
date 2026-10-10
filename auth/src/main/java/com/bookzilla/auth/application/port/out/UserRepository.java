@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface UserRepository {
     User save(User user);
     boolean existsByEmail(String email);
-    Optional<User> findByEmail(String email);
+    Optional<User> getUserByEmail(String email);
     Optional<User> getUserByKeycloakId(UUID keycloakId);
     void deleteUserByEmail(String email);
     List<User> getAllUsers();

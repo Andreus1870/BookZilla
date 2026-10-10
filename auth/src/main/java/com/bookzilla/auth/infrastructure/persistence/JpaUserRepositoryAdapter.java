@@ -13,7 +13,6 @@ import java.util.UUID;
 public class JpaUserRepositoryAdapter implements UserRepository {
     private final JpaUserRepository jpaUserRepository;
 
-    @Autowired
     public JpaUserRepositoryAdapter(JpaUserRepository jpaUserRepository) {
         this.jpaUserRepository = jpaUserRepository;
     }
@@ -29,7 +28,7 @@ public class JpaUserRepositoryAdapter implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByEmail(String email) {
+    public Optional<User> getUserByEmail(String email) {
         return jpaUserRepository.findByEmailIgnoreCase(email);
     }
 
