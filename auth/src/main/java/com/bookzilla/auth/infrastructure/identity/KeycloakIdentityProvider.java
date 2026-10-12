@@ -14,8 +14,7 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class KeycloakIdentityProvider implements IdentityProvider {
@@ -27,6 +26,9 @@ public class KeycloakIdentityProvider implements IdentityProvider {
     private static final String USER_ROLE = "USER";
     private static final String MODERATOR_ROLE = "MODERATOR";
     private static final String ADMIN_ROLE = "ADMIN";
+
+    private static final Set<String> BUSINESS_ROLES =
+            Set.of(USER_ROLE, MODERATOR_ROLE, ADMIN_ROLE);
 
     public KeycloakIdentityProvider(Keycloak keycloak,
                                             @Value("${keycloak.realm}") String keycloakRealm) {
@@ -100,6 +102,26 @@ public class KeycloakIdentityProvider implements IdentityProvider {
             }
         }
 
+    }
+
+    @Override
+    public Map<String, String> getUserRolesByEmails(List<String> emails) {
+
+        Map<String, String> rolesByEmails = new HashMap<>();
+
+        emails.forEach(email -> {
+            String role = getUserRoles(email).stream()
+                    .map(RoleRepresentation::getName)
+                    .filter(BUSINESS_ROLES::contains)
+                    .findFirst()
+                    .orElseThrow(() ->
+                            new IllegalStateException("Business role was not found for user: " + email)
+                    );
+
+            rolesByEmails.put(email, role);
+        });
+
+        return rolesByEmails;
     }
 
 

@@ -10,6 +10,8 @@ public record UserShortInfo(
 
         String lastName,
 
-        Instant registrationDate
+        Instant registrationDate,
+
+        String role
 ) {
 }

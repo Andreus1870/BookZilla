@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -127,12 +128,18 @@ public class UserService {
 
         List<User> users = userRepository.getAllUsers();
 
+        Map<String, String> rolesByEmails =
+                identityProvider.getUserRolesByEmails(users.stream()
+                                                            .map(User::getEmail)
+                                                            .toList());
+
         return users.stream()
                 .map(user -> new UserShortInfo(
                         user.getEmail(),
                         user.getFirstName(),
                         user.getLastName(),
-                        user.getRegistrationDate()
+                        user.getRegistrationDate(),
+                        rolesByEmails.get(user.getEmail())
                 ))
                 .toList();
     }
