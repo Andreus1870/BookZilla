@@ -13,5 +13,11 @@ public interface IdentityProvider {
 
     boolean hasUserRole(String email);
 
+    boolean hasModeratorRole(String email);
+
+    void downgradeModerator(String email);
+
     void deleteKeycloakUserRepresentation(String email);
+
+
 }

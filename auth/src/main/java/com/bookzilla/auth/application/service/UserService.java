@@ -1,8 +1,6 @@
 package com.bookzilla.auth.application.service;
 
-import com.bookzilla.auth.application.exception.CannotDeleteModeratorException;
-import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
-import com.bookzilla.auth.application.exception.UserNotFoundException;
+import com.bookzilla.auth.application.exception.*;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.User;
@@ -137,6 +135,25 @@ public class UserService {
                         user.getRegistrationDate()
                 ))
                 .toList();
+    }
+
+    public void downgradeModerator(String email) {
+
+        if (!identityProvider.hasModeratorRole(email)) {
+            if (identityProvider.hasUserRole(email)) {
+                throw new CannotDowngradeUserException(
+                        "Cannot downgrade user with email: " + email
+                );
+            }
+
+            throw new CannotDowngradeAdminException(
+                    "Cannot downgrade admin with email: " + email
+            );
+        }
+
+
+        identityProvider.downgradeModerator(email);
+
     }
 
     private UserInfo toUserInfo(User user) {

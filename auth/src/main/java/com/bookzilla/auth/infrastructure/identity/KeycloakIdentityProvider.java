@@ -1,12 +1,13 @@
 package com.bookzilla.auth.infrastructure.identity;
 
-import com.bookzilla.auth.application.exception.KeycloakUserCreationException;
-import com.bookzilla.auth.application.exception.KeycloakUserDeletionException;
-import com.bookzilla.auth.application.exception.KeycloakUserRepresentationNotFoundException;
+import com.bookzilla.auth.application.exception.*;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import jakarta.ws.rs.core.Response;
+import org.jspecify.annotations.NonNull;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.RoleMappingResource;
+import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -93,7 +94,6 @@ public class KeycloakIdentityProvider implements IdentityProvider {
                 .add(List.of(userRole));
     }
 
-
     private static UserRepresentation createUserRepresentation(
             String firstName,
             String lastName,
@@ -118,20 +118,10 @@ public class KeycloakIdentityProvider implements IdentityProvider {
         return user;
     }
 
-
     @Override
     public boolean hasUserRole(String email) {
 
-        UserRepresentation user = keycloak.realm(keycloakRealm)
-                .users()
-                .searchByEmail(email, true)
-                .stream()
-                .findFirst()
-                .orElseThrow(() ->
-                    new KeycloakUserRepresentationNotFoundException(
-                            "Keycloak user not found by email: " + email
-                    )
-                );
+        UserRepresentation user = getUserRepresentationByEmail(email);
 
         List<RoleRepresentation> roles = keycloak.realm(keycloakRealm)
                 .users()
@@ -145,20 +135,53 @@ public class KeycloakIdentityProvider implements IdentityProvider {
 
     }
 
+    @Override
+    public boolean hasModeratorRole(String email) {
+
+        UserRepresentation user = getUserRepresentationByEmail(email);
+
+        List<RoleRepresentation> roles = keycloak.realm(keycloakRealm)
+                .users()
+                .get(user.getId())
+                .roles()
+                .realmLevel()
+                .listAll();
+
+        return roles.stream()
+                .anyMatch(role -> role.getName().equals("MODERATOR"));
+
+    }
+
+    @Override
+    public void downgradeModerator(String email) {
+
+        UserRepresentation user = getUserRepresentationByEmail(email);
+
+        UserResource userResource = keycloak.realm(keycloakRealm)
+                .users()
+                .get(user.getId());
+
+        RoleMappingResource roleMapping = userResource.roles();
+
+        RoleRepresentation moderatorRole = keycloak.realm(keycloakRealm)
+                .roles()
+                .get("MODERATOR")
+                .toRepresentation();
+
+        RoleRepresentation userRole = keycloak.realm(keycloakRealm)
+                .roles()
+                .get("USER")
+                .toRepresentation();
+
+        roleMapping.realmLevel().remove(List.of(moderatorRole));
+        roleMapping.realmLevel().add(List.of(userRole));
+
+    }
 
     @Override
     public void deleteKeycloakUserRepresentation(String email) {
 
-        UserRepresentation user = keycloak.realm(keycloakRealm)
-                .users()
-                .searchByEmail(email, true)
-                .stream()
-                .findFirst()
-                .orElseThrow(() ->
-                        new KeycloakUserRepresentationNotFoundException(
-                                "Keycloak user not found by email: " + email
-                        )
-                );
+        UserRepresentation user = getUserRepresentationByEmail(email);
 
 
         try (Response response = keycloak.realm(keycloakRealm)
@@ -173,5 +196,19 @@ public class KeycloakIdentityProvider implements IdentityProvider {
             }
         }
 
+    }
+
+    private UserRepresentation getUserRepresentationByEmail(String email) {
+        UserRepresentation user = keycloak.realm(keycloakRealm)
+                .users()
+                .searchByEmail(email, true)
+                .stream()
+                .findFirst()
+                .orElseThrow(() ->
+                        new KeycloakUserRepresentationNotFoundException(
+                                "Keycloak user not found by email: " + email
+                        )
+                );
+        return user;
     }
 }
