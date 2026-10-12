@@ -156,6 +156,19 @@ public class UserService {
 
     }
 
+    public void promoteToModerator(String email) {
+
+        if (identityProvider.hasModeratorRole(email)) {
+            throw new AlreadyIsModeratorException("Cannot promote moderator with email: " + email);
+        }
+
+        if (identityProvider.hasAdminRole(email)) {
+            throw new CannotPromoteAdminException("Cannot promote admin with email: " + email);
+        }
+
+        identityProvider.promoteToModerator(email);
+    }
+
     private UserInfo toUserInfo(User user) {
 
         return new UserInfo(

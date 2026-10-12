@@ -2,6 +2,7 @@ package com.bookzilla.auth.infrastructure.web.controller;
 
 import com.bookzilla.auth.application.service.UserService;
 import com.bookzilla.auth.infrastructure.web.dto.DowngradeModeratorRequest;
+import com.bookzilla.auth.infrastructure.web.dto.PromoteToModeratorRequest;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,12 @@ public class AdminController {
     @PostMapping("/downgrade-moderator")
     public void downgradeModerator(@Valid @RequestBody DowngradeModeratorRequest downgradeModeratorRequest) {
         userService.downgradeModerator(downgradeModeratorRequest.email());
+    }
+
+    @SecurityRequirement(name = "oauth2")
+    @PostMapping("/promote-to-moderator")
+    public void promoteToModerator(@Valid @RequestBody PromoteToModeratorRequest promoteToModeratorRequest) {
+        userService.promoteToModerator(promoteToModeratorRequest.email());
     }
 
 }

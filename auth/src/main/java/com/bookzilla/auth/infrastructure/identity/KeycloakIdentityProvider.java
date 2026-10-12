@@ -153,6 +153,46 @@ public class KeycloakIdentityProvider implements IdentityProvider {
     }
 
     @Override
+    public boolean hasAdminRole(String email) {
+
+        UserRepresentation user = getUserRepresentationByEmail(email);
+
+        List<RoleRepresentation> roles = keycloak.realm(keycloakRealm)
+                .users()
+                .get(user.getId())
+                .roles()
+                .realmLevel()
+                .listAll();
+
+        return roles.stream()
+                .anyMatch(role -> role.getName().equals("ADMIN"));
+    }
+
+    @Override
+    public void promoteToModerator(String email) {
+        UserRepresentation user = getUserRepresentationByEmail(email);
+
+        UserResource userResource = keycloak.realm(keycloakRealm)
+                .users()
+                .get(user.getId());
+
+        RoleMappingResource roleMapping = userResource.roles();
+
+        RoleRepresentation moderatorRole = keycloak.realm(keycloakRealm)
+                .roles()
+                .get("MODERATOR")
+                .toRepresentation();
+
+        RoleRepresentation userRole = keycloak.realm(keycloakRealm)
+                .roles()
+                .get("USER")
+                .toRepresentation();
+
+        roleMapping.realmLevel().remove(List.of(userRole));
+        roleMapping.realmLevel().add(List.of(moderatorRole));
+    }
+
+    @Override
     public void downgradeModerator(String email) {
 
         UserRepresentation user = getUserRepresentationByEmail(email);
@@ -211,4 +251,5 @@ public class KeycloakIdentityProvider implements IdentityProvider {
                 );
         return user;
     }
+
 }
