@@ -1,13 +1,13 @@
 package com.bookzilla.auth.infrastructure.identity;
 
-import com.bookzilla.auth.application.exception.*;
+import com.bookzilla.auth.application.exception.KeycloakUserCreationException;
+import com.bookzilla.auth.application.exception.KeycloakUserDeletionException;
+import com.bookzilla.auth.application.exception.KeycloakUserRepresentationNotFoundException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import jakarta.ws.rs.core.Response;
-import org.jspecify.annotations.NonNull;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RoleMappingResource;
-import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -20,11 +20,13 @@ import java.util.UUID;
 @Component
 public class KeycloakIdentityProvider implements IdentityProvider {
 
-    private static final String USER_ROLE = "USER";
 
     private final Keycloak keycloak;
     private final String keycloakRealm;
 
+    private static final String USER_ROLE = "USER";
+    private static final String MODERATOR_ROLE = "MODERATOR";
+    private static final String ADMIN_ROLE = "ADMIN";
 
     public KeycloakIdentityProvider(Keycloak keycloak,
                                             @Value("${keycloak.realm}") String keycloakRealm) {
@@ -50,6 +52,83 @@ public class KeycloakIdentityProvider implements IdentityProvider {
         return userId;
     }
 
+    @Override
+    public boolean hasUserRole(String email) {
+
+        return hasRole(email, USER_ROLE);
+    }
+
+    @Override
+    public boolean hasModeratorRole(String email) {
+
+        return hasRole(email, MODERATOR_ROLE);
+    }
+
+    @Override
+    public boolean hasAdminRole(String email) {
+
+        return hasRole(email, ADMIN_ROLE);
+    }
+
+    @Override
+    public void promoteToModerator(String email) {
+
+        changeRole(email, USER_ROLE, MODERATOR_ROLE);
+    }
+
+    @Override
+    public void downgradeModerator(String email) {
+
+        changeRole(email, MODERATOR_ROLE, USER_ROLE);
+    }
+
+    @Override
+    public void deleteKeycloakUserRepresentation(String email) {
+
+        UserRepresentation user = getUserRepresentationByEmail(email);
+
+
+        try (Response response = keycloak.realm(keycloakRealm)
+                .users()
+                .delete(user.getId())) {
+
+            if (response.getStatus() != Response.Status.NO_CONTENT.getStatusCode()) {
+                throw new KeycloakUserDeletionException(
+                        "Failed to delete Keycloak user. HTTP status: "
+                                + response.getStatus()
+                );
+            }
+        }
+
+    }
+
+
+
+
+
+    private UserRepresentation getUserRepresentationByEmail(String email) {
+        return keycloak.realm(keycloakRealm)
+                .users()
+                .searchByEmail(email, true)
+                .stream()
+                .findFirst()
+                .orElseThrow(() ->
+                        new KeycloakUserRepresentationNotFoundException(
+                                "Keycloak user not found by email: " + email
+                        )
+                );
+    }
+
+    private List<RoleRepresentation> getUserRoles(String email) {
+        UserRepresentation user = getUserRepresentationByEmail(email);
+
+        return keycloak.realm(keycloakRealm)
+                .users()
+                .get(user.getId())
+                .roles()
+                .realmLevel()
+                .listAll();
+    }
 
     private UUID createKeycloakUser(UserRepresentation user) {
         try (Response response = keycloak
@@ -118,138 +197,32 @@ public class KeycloakIdentityProvider implements IdentityProvider {
         return user;
     }
 
-    @Override
-    public boolean hasUserRole(String email) {
+    private boolean hasRole(String email, String roleName) {
 
-        UserRepresentation user = getUserRepresentationByEmail(email);
-
-        List<RoleRepresentation> roles = keycloak.realm(keycloakRealm)
-                .users()
-                .get(user.getId())
-                .roles()
-                .realmLevel()
-                .listAll();
-
-        return roles.stream()
-                .anyMatch(role -> role.getName().equals("USER"));
-
-    }
-
-    @Override
-    public boolean hasModeratorRole(String email) {
-
-        UserRepresentation user = getUserRepresentationByEmail(email);
-
-        List<RoleRepresentation> roles = keycloak.realm(keycloakRealm)
-                .users()
-                .get(user.getId())
-                .roles()
-                .realmLevel()
-                .listAll();
-
-        return roles.stream()
-                .anyMatch(role -> role.getName().equals("MODERATOR"));
-
-    }
-
-    @Override
-    public boolean hasAdminRole(String email) {
-
-        UserRepresentation user = getUserRepresentationByEmail(email);
-
-        List<RoleRepresentation> roles = keycloak.realm(keycloakRealm)
-                .users()
-                .get(user.getId())
-                .roles()
-                .realmLevel()
-                .listAll();
-
-        return roles.stream()
-                .anyMatch(role -> role.getName().equals("ADMIN"));
-    }
-
-    @Override
-    public void promoteToModerator(String email) {
-        UserRepresentation user = getUserRepresentationByEmail(email);
-
-        UserResource userResource = keycloak.realm(keycloakRealm)
-                .users()
-                .get(user.getId());
-
-        RoleMappingResource roleMapping = userResource.roles();
-
-        RoleRepresentation moderatorRole = keycloak.realm(keycloakRealm)
-                .roles()
-                .get("MODERATOR")
-                .toRepresentation();
-
-        RoleRepresentation userRole = keycloak.realm(keycloakRealm)
-                .roles()
-                .get("USER")
-                .toRepresentation();
-
-        roleMapping.realmLevel().remove(List.of(userRole));
-        roleMapping.realmLevel().add(List.of(moderatorRole));
-    }
-
-    @Override
-    public void downgradeModerator(String email) {
-
-        UserRepresentation user = getUserRepresentationByEmail(email);
-
-        UserResource userResource = keycloak.realm(keycloakRealm)
-                .users()
-                .get(user.getId());
-
-        RoleMappingResource roleMapping = userResource.roles();
-
-        RoleRepresentation moderatorRole = keycloak.realm(keycloakRealm)
-                .roles()
-                .get("MODERATOR")
-                .toRepresentation();
-
-        RoleRepresentation userRole = keycloak.realm(keycloakRealm)
-                .roles()
-                .get("USER")
-                .toRepresentation();
-
-        roleMapping.realmLevel().remove(List.of(moderatorRole));
-        roleMapping.realmLevel().add(List.of(userRole));
-
-    }
-
-    @Override
-    public void deleteKeycloakUserRepresentation(String email) {
-
-        UserRepresentation user = getUserRepresentationByEmail(email);
-
-
-        try (Response response = keycloak.realm(keycloakRealm)
-                .users()
-                .delete(user.getId())) {
-
-            if (response.getStatus() != Response.Status.NO_CONTENT.getStatusCode()) {
-                throw new KeycloakUserDeletionException(
-                        "Failed to delete Keycloak user. HTTP status: "
-                                + response.getStatus()
-                );
-            }
-        }
-
-    }
-
-    private UserRepresentation getUserRepresentationByEmail(String email) {
-        UserRepresentation user = keycloak.realm(keycloakRealm)
-                .users()
-                .searchByEmail(email, true)
+        return getUserRoles(email)
                 .stream()
-                .findFirst()
-                .orElseThrow(() ->
-                        new KeycloakUserRepresentationNotFoundException(
-                                "Keycloak user not found by email: " + email
-                        )
-                );
-        return user;
+                .anyMatch(role -> roleName.equals(role.getName()));
     }
 
+    private void changeRole(String email, String oldRole, String newRole) {
+        UserRepresentation user = getUserRepresentationByEmail(email);
+
+        RoleMappingResource roleMapping = keycloak.realm(keycloakRealm)
+                .users()
+                .get(user.getId())
+                .roles();
+
+        RoleRepresentation oldRoleRepresentation = keycloak.realm(keycloakRealm)
+                .roles()
+                .get(oldRole)
+                .toRepresentation();
+
+        RoleRepresentation newRoleRepresentation = keycloak.realm(keycloakRealm)
+                .roles()
+                .get(newRole)
+                .toRepresentation();
+
+        roleMapping.realmLevel().remove(List.of(oldRoleRepresentation));
+        roleMapping.realmLevel().add(List.of(newRoleRepresentation));
+    }
 }
