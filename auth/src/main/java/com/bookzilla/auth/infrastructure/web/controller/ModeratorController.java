@@ -29,7 +29,7 @@ public class ModeratorController {
 
     @SecurityRequirement(name = "oauth2")
     @GetMapping("/get-all-users")
-    public List<UserShortInfo> getAllUsers(){
+    public List<UserShortInfo> getAllUsers() {
         return userService.getAllUsers();
     }
 

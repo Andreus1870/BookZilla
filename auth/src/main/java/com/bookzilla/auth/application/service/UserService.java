@@ -1,8 +1,6 @@
 package com.bookzilla.auth.application.service;
 
-import com.bookzilla.auth.application.exception.CannotDeleteModeratorException;
-import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
-import com.bookzilla.auth.application.exception.UserNotFoundException;
+import com.bookzilla.auth.application.exception.*;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.User;
@@ -15,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -129,14 +128,52 @@ public class UserService {
 
         List<User> users = userRepository.getAllUsers();
 
+        Map<String, String> rolesByEmails =
+                identityProvider.getUserRolesByEmails(users.stream()
+                                                            .map(User::getEmail)
+                                                            .toList());
+
         return users.stream()
                 .map(user -> new UserShortInfo(
                         user.getEmail(),
                         user.getFirstName(),
                         user.getLastName(),
-                        user.getRegistrationDate()
+                        user.getRegistrationDate(),
+                        rolesByEmails.get(user.getEmail())
                 ))
                 .toList();
+    }
+
+    public void downgradeModerator(String email) {
+
+        if (!identityProvider.hasModeratorRole(email)) {
+            if (identityProvider.hasUserRole(email)) {
+                throw new CannotDowngradeUserException(
+                        "Cannot downgrade user with email: " + email
+                );
+            }
+
+            throw new CannotDowngradeAdminException(
+                    "Cannot downgrade admin with email: " + email
+            );
+        }
+
+
+        identityProvider.downgradeModerator(email);
+
+    }
+
+    public void promoteToModerator(String email) {
+
+        if (identityProvider.hasModeratorRole(email)) {
+            throw new AlreadyIsModeratorException("Cannot promote moderator with email: " + email);
+        }
+
+        if (identityProvider.hasAdminRole(email)) {
+            throw new CannotPromoteAdminException("Cannot promote admin with email: " + email);
+        }
+
+        identityProvider.promoteToModerator(email);
     }
 
     private UserInfo toUserInfo(User user) {
