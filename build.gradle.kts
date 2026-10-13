@@ -1,46 +1,13 @@
+import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
+
 plugins {
-    id("org.springframework.boot") version "3.5.5"
-    id("io.spring.dependency-management") version "1.1.7"
-    java
+    id("org.springframework.boot") version "3.5.5" apply false
+    id("io.spring.dependency-management") version "1.1.7" apply false
     idea
 }
 
 group = "com.bookzilla"
 version = "0.0.1-SNAPSHOT"
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation(project(":auth"))
-    implementation(project(":booking"))
-    implementation(project(":notification"))
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
-    implementation("me.paulschwarz:springboot3-dotenv:5.1.0")
-
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.springframework.boot:spring-boot-starter-data-jpa")
-
-    testImplementation("org.testcontainers:testcontainers")
-    testImplementation("org.testcontainers:junit-jupiter")
-    testImplementation("org.testcontainers:postgresql")
-    testImplementation("org.springframework.boot:spring-boot-testcontainers")
-}
-
-dependencyManagement {
-    imports {
-        mavenBom("org.springframework.boot:spring-boot-dependencies:3.5.5")
-        mavenBom("org.testcontainers:testcontainers-bom:1.21.4")
-    }
-}
 
 subprojects {
     apply(plugin = "java")
@@ -48,21 +15,26 @@ subprojects {
     apply(plugin = "idea")
 
     group = "com.bookzilla"
+    version = rootProject.version
 
     repositories {
         mavenCentral()
     }
 
-    java {
+    configure<JavaPluginExtension> {
         toolchain {
             languageVersion = JavaLanguageVersion.of(21)
         }
     }
 
-    dependencyManagement {
+    configure<DependencyManagementExtension> {
         imports {
             mavenBom("org.springframework.boot:spring-boot-dependencies:3.5.5")
         }
+    }
+
+    tasks.withType<Test>().configureEach {
+        useJUnitPlatform()
     }
 
     idea {
@@ -71,8 +43,6 @@ subprojects {
             isDownloadJavadoc = true
         }
     }
-
-
 }
 
 idea {
@@ -80,8 +50,4 @@ idea {
         isDownloadSources = true
         isDownloadJavadoc = true
     }
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
 }

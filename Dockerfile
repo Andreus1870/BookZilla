@@ -1,5 +1,5 @@
 FROM eclipse-temurin:21-jre
 
-COPY build/libs/BookZilla-0.0.1-SNAPSHOT.jar app.jar
+COPY application/build/libs/application-0.0.1-SNAPSHOT.jar app.jar
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
