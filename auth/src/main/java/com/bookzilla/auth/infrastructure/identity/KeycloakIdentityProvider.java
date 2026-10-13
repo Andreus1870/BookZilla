@@ -105,7 +105,7 @@ public class KeycloakIdentityProvider implements IdentityProvider {
     }
 
     @Override
-    public Map<String, String> getUserRolesByEmails(List<String> emails) {
+    public Map<String, String> getUsersRolesByEmails(List<String> emails) {
 
         Map<String, String> rolesByEmails = new HashMap<>();
 

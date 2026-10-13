@@ -1,6 +1,6 @@
 package com.bookzilla.auth.infrastructure.web.controller;
 
-import com.bookzilla.auth.application.service.UserService;
+import com.bookzilla.auth.application.service.UserRoleService;
 import com.bookzilla.auth.infrastructure.web.dto.DowngradeModeratorRequest;
 import com.bookzilla.auth.infrastructure.web.dto.PromoteToModeratorRequest;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -14,22 +14,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/admin")
 public class AdminController {
 
-    private final UserService userService;
+    private final UserRoleService userRoleService;
 
-    public AdminController(UserService userService) {
-        this.userService = userService;
+    public AdminController(UserRoleService userRoleService) {
+        this.userRoleService = userRoleService;
     }
 
     @SecurityRequirement(name = "oauth2")
     @PostMapping("/downgrade-moderator")
     public void downgradeModerator(@Valid @RequestBody DowngradeModeratorRequest downgradeModeratorRequest) {
-        userService.downgradeModerator(downgradeModeratorRequest.email());
+        userRoleService.downgradeModerator(downgradeModeratorRequest.email());
     }
 
     @SecurityRequirement(name = "oauth2")
     @PostMapping("/promote-to-moderator")
     public void promoteToModerator(@Valid @RequestBody PromoteToModeratorRequest promoteToModeratorRequest) {
-        userService.promoteToModerator(promoteToModeratorRequest.email());
+        userRoleService.promoteToModerator(promoteToModeratorRequest.email());
     }
 
 }

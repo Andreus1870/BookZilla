@@ -1,6 +1,5 @@
 package com.bookzilla.auth.application.port.out;
 
-import java.lang.reflect.MalformedParameterizedTypeException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -26,5 +25,5 @@ public interface IdentityProvider {
 
     void deleteKeycloakUserRepresentation(String email);
 
-    Map<String, String> getUserRolesByEmails(List<String> emails);
+    Map<String, String> getUsersRolesByEmails(List<String> emails);
 }
