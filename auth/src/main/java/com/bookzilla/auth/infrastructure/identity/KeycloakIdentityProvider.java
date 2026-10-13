@@ -110,19 +110,27 @@ public class KeycloakIdentityProvider implements IdentityProvider {
         Map<String, String> rolesByEmails = new HashMap<>();
 
         emails.forEach(email -> {
-            String role = getUserRoles(email).stream()
-                    .map(RoleRepresentation::getName)
-                    .filter(BUSINESS_ROLES::contains)
-                    .findFirst()
-                    .orElseThrow(() ->
-                            new IllegalStateException("Business role was not found for user: " + email)
-                    );
+            String role = getUserRoleByEmail(email);
 
             rolesByEmails.put(email, role);
         });
 
         return rolesByEmails;
     }
+
+    @Override
+    public String getUserRoleByEmail(String email) {
+
+        return getUserRoles(email).stream()
+                .map(RoleRepresentation::getName)
+                .filter(BUSINESS_ROLES::contains)
+                .findFirst()
+                .orElseThrow(() ->
+                        new IllegalStateException("Business role was not found for user: " + email)
+                );
+
+    }
+
 
 
 

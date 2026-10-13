@@ -104,7 +104,8 @@ public class UserService {
                 user.getPhone(),
                 user.getCountry(),
                 user.getCity(),
-                user.getRegistrationDate().toString()
+                user.getRegistrationDate().toString(),
+                identityProvider.getUserRoleByEmail(user.getEmail())
         );
 
     }

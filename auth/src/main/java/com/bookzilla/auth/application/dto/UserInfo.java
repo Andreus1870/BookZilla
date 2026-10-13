@@ -13,6 +13,8 @@ public record UserInfo (
 
         String city,
 
-        String registrationDate
+        String registrationDate,
+
+        String role
 ){
 }

@@ -40,7 +40,8 @@ public class UserControllerTest {
                 null,
                 null,
                 null,
-                "2026-09-30T10:00:00Z"
+                "2026-09-30T10:00:00Z",
+                "USER"
         );
 
         when(authentication.getName()).thenReturn(String.valueOf(keycloakId));

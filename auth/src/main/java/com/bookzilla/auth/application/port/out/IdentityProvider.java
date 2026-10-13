@@ -25,5 +25,7 @@ public interface IdentityProvider {
 
     void deleteKeycloakUserRepresentation(String email);
 
+    String getUserRoleByEmail(String email);
+
     Map<String, String> getUsersRolesByEmails(List<String> emails);
 }

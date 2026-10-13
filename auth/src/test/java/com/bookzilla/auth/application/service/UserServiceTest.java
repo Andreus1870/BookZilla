@@ -142,9 +142,11 @@ public class UserServiceTest {
                 null,
                 null,
                 null,
-                user.getRegistrationDate().toString()
+                user.getRegistrationDate().toString(),
+                "USER"
         );
 
+        when(identityProvider.getUserRoleByEmail(user.getEmail())).thenReturn("USER");
         when(userRepository.getUserByKeycloakId(keycloakId)).thenReturn(Optional.of(user));
 
 
