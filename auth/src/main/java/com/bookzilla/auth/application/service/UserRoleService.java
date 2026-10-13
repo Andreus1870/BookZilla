@@ -23,17 +23,15 @@ public class UserRoleService {
 
         UUID keycloakId = getKeycloakIdByEmail(email);
 
-        if (!identityProvider.hasModeratorRole(keycloakId)) {
-            if (identityProvider.hasUserRole(keycloakId)) {
-                throw new CannotDowngradeUserException(
-                        "Cannot downgrade user with id: " + keycloakId
-                );
-            }
 
-            throw new CannotDowngradeAdminException(
-                    "Cannot downgrade admin with id: " + keycloakId
-            );
+        if (identityProvider.hasUserRole(keycloakId)) {
+            throw new CannotDowngradeUserException("Cannot downgrade user with id: " + keycloakId);
         }
+
+        if (identityProvider.hasAdminRole(keycloakId)) {
+            throw new CannotDowngradeAdminException("Cannot downgrade admin with id: " + keycloakId);
+        }
+
 
 
         identityProvider.downgradeModerator(keycloakId);
