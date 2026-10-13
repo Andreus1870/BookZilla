@@ -168,7 +168,6 @@ public class KeycloakIdentityProvider implements IdentityProvider {
         }
     }
 
-
     private void assignUserRole(UUID keycloakUserId) {
         RoleRepresentation userRole =
                 keycloak

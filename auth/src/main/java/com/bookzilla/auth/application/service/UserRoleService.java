@@ -23,12 +23,13 @@ public class UserRoleService {
 
         UUID keycloakId = getKeycloakIdByEmail(email);
 
+        String role = identityProvider.getUserRoleByKeycloakId(keycloakId);
 
-        if (identityProvider.hasUserRole(keycloakId)) {
+        if (role.equals("USER")) {
             throw new CannotDowngradeUserException("Cannot downgrade user with id: " + keycloakId);
         }
 
-        if (identityProvider.hasAdminRole(keycloakId)) {
+        if (role.equals("ADMIN")) {
             throw new CannotDowngradeAdminException("Cannot downgrade admin with id: " + keycloakId);
         }
 
@@ -42,11 +43,13 @@ public class UserRoleService {
 
         UUID keycloakId = getKeycloakIdByEmail(email);
 
-        if (identityProvider.hasModeratorRole(keycloakId)) {
+        String role = identityProvider.getUserRoleByKeycloakId(keycloakId);
+
+        if (role.equals("MODERATOR")) {
             throw new AlreadyIsModeratorException("Cannot promote moderator with id: " + keycloakId);
         }
 
-        if (identityProvider.hasAdminRole(keycloakId)) {
+        if (role.equals("ADMIN")) {
             throw new CannotPromoteAdminException("Cannot promote admin with id: " + keycloakId);
         }
 
