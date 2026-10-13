@@ -3,6 +3,7 @@ package com.bookzilla.auth.application.service;
 import com.bookzilla.auth.application.exception.*;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
+import com.bookzilla.auth.domain.BusinessRole;
 import com.bookzilla.auth.domain.User;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +26,11 @@ public class UserRoleService {
 
         String role = identityProvider.getUserRoleByKeycloakId(keycloakId);
 
-        if (role.equals("USER")) {
+        if (role.equals(BusinessRole.USER.name())) {
             throw new CannotDowngradeUserException("Cannot downgrade user with id: " + keycloakId);
         }
 
-        if (role.equals("ADMIN")) {
+        if (role.equals(BusinessRole.ADMIN.name())) {
             throw new CannotDowngradeAdminException("Cannot downgrade admin with id: " + keycloakId);
         }
 
@@ -45,11 +46,11 @@ public class UserRoleService {
 
         String role = identityProvider.getUserRoleByKeycloakId(keycloakId);
 
-        if (role.equals("MODERATOR")) {
+        if (role.equals(BusinessRole.MODERATOR.name())) {
             throw new AlreadyIsModeratorException("Cannot promote moderator with id: " + keycloakId);
         }
 
-        if (role.equals("ADMIN")) {
+        if (role.equals(BusinessRole.ADMIN.name())) {
             throw new CannotPromoteAdminException("Cannot promote admin with id: " + keycloakId);
         }
 

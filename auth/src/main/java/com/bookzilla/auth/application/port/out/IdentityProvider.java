@@ -1,5 +1,7 @@
 package com.bookzilla.auth.application.port.out;
 
+import com.bookzilla.auth.domain.BusinessRole;
+
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;

@@ -3,6 +3,7 @@ package com.bookzilla.auth.infrastructure.identity;
 import com.bookzilla.auth.application.exception.KeycloakUserCreationException;
 import com.bookzilla.auth.application.exception.KeycloakUserDeletionException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
+import com.bookzilla.auth.domain.BusinessRole;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
@@ -22,12 +23,11 @@ public class KeycloakIdentityProvider implements IdentityProvider {
     private final Keycloak keycloak;
     private final String keycloakRealm;
 
-    private static final String USER_ROLE = "USER";
-    private static final String MODERATOR_ROLE = "MODERATOR";
-    private static final String ADMIN_ROLE = "ADMIN";
 
     private static final Set<String> BUSINESS_ROLES =
-            Set.of(USER_ROLE, MODERATOR_ROLE, ADMIN_ROLE);
+            Set.of(BusinessRole.USER.name(),
+                    BusinessRole.MODERATOR.name(),
+                    BusinessRole.ADMIN.name());
 
     public KeycloakIdentityProvider(Keycloak keycloak,
                                             @Value("${keycloak.realm}") String keycloakRealm) {
@@ -56,31 +56,31 @@ public class KeycloakIdentityProvider implements IdentityProvider {
     @Override
     public boolean hasUserRole(UUID keycloakId) {
 
-        return hasRole(keycloakId, USER_ROLE);
+        return hasRole(keycloakId, BusinessRole.USER.name());
     }
 
     @Override
     public boolean hasModeratorRole(UUID keycloakId) {
 
-        return hasRole(keycloakId, MODERATOR_ROLE);
+        return hasRole(keycloakId, BusinessRole.MODERATOR.name());
     }
 
     @Override
     public boolean hasAdminRole(UUID keycloakId) {
 
-        return hasRole(keycloakId, ADMIN_ROLE);
+        return hasRole(keycloakId, BusinessRole.ADMIN.name());
     }
 
     @Override
     public void promoteToModerator(UUID keycloakId) {
 
-        changeRole(keycloakId, USER_ROLE, MODERATOR_ROLE);
+        changeRole(keycloakId, BusinessRole.USER.name(), BusinessRole.MODERATOR.name());
     }
 
     @Override
     public void downgradeModerator(UUID keycloakId) {
 
-        changeRole(keycloakId, MODERATOR_ROLE, USER_ROLE);
+        changeRole(keycloakId, BusinessRole.MODERATOR.name(), BusinessRole.USER.name());
     }
 
     @Override
@@ -173,7 +173,7 @@ public class KeycloakIdentityProvider implements IdentityProvider {
                 keycloak
                         .realm(keycloakRealm)
                         .roles()
-                        .get(USER_ROLE)
+                        .get(BusinessRole.USER.name())
                         .toRepresentation();
 
         keycloak
