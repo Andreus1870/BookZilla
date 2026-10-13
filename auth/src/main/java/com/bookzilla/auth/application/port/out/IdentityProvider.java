@@ -13,19 +13,19 @@ public interface IdentityProvider {
             String password
     );
 
-    boolean hasUserRole(String email);
+    boolean hasUserRole(UUID keycloakId);
 
-    boolean hasModeratorRole(String email);
+    boolean hasModeratorRole(UUID keycloakId);
 
-    boolean hasAdminRole(String email);
+    boolean hasAdminRole(UUID keycloakId);
 
-    void downgradeModerator(String email);
+    void downgradeModerator(UUID keycloakId);
 
-    void promoteToModerator(String email);
+    void promoteToModerator(UUID keycloakId);
 
-    void deleteKeycloakUserRepresentation(String email);
+    void deleteKeycloakUserRepresentation(UUID keycloakId);
 
-    String getUserRoleByEmail(String email);
+    String getUserRoleByKeycloakId(UUID keycloakId);
 
-    Map<String, String> getUsersRolesByEmails(List<String> emails);
+    Map<UUID, String> getUsersRolesByKeycloakIds(List<UUID> keycloakIds);
 }

@@ -40,11 +40,13 @@ public class UserAdministrationService {
                         )
                 );
 
-        if (!identityProvider.hasUserRole(email)) {
+        UUID keycloakId = user.getKeycloakId();
+
+        if (!identityProvider.hasUserRole(keycloakId)) {
             throw new CannotDeleteModeratorException("Moderators cannot delete other moderators");
         }
 
-        identityProvider.deleteKeycloakUserRepresentation(email);
+        identityProvider.deleteKeycloakUserRepresentation(keycloakId);
 
         userRepository.deleteUserByEmail(email);
 
@@ -61,9 +63,9 @@ public class UserAdministrationService {
 
         List<User> users = userRepository.getAllUsers();
 
-        Map<String, String> rolesByEmails =
-                identityProvider.getUsersRolesByEmails(users.stream()
-                        .map(User::getEmail)
+        Map<UUID, String> rolesByKeycloakIds =
+                identityProvider.getUsersRolesByKeycloakIds(users.stream()
+                        .map(User::getKeycloakId)
                         .toList());
 
         return users.stream()
@@ -72,7 +74,7 @@ public class UserAdministrationService {
                         user.getFirstName(),
                         user.getLastName(),
                         user.getRegistrationDate(),
-                        rolesByEmails.get(user.getEmail())
+                        rolesByKeycloakIds.get(user.getKeycloakId())
                 ))
                 .toList();
     }

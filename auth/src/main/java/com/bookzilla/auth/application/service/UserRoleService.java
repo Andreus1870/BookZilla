@@ -1,50 +1,67 @@
 package com.bookzilla.auth.application.service;
 
-import com.bookzilla.auth.application.exception.AlreadyIsModeratorException;
-import com.bookzilla.auth.application.exception.CannotDowngradeAdminException;
-import com.bookzilla.auth.application.exception.CannotDowngradeUserException;
-import com.bookzilla.auth.application.exception.CannotPromoteAdminException;
+import com.bookzilla.auth.application.exception.*;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
+import com.bookzilla.auth.application.port.out.UserRepository;
+import com.bookzilla.auth.domain.User;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class UserRoleService {
 
     private final IdentityProvider identityProvider;
+    private final UserRepository userRepository;
 
-    public UserRoleService(IdentityProvider identityProvider) {
+    public UserRoleService(IdentityProvider identityProvider, UserRepository userRepository) {
         this.identityProvider = identityProvider;
+        this.userRepository = userRepository;
     }
 
     public void downgradeModerator(String email) {
 
-        if (!identityProvider.hasModeratorRole(email)) {
-            if (identityProvider.hasUserRole(email)) {
+        UUID keycloakId = getKeycloakIdByEmail(email);
+
+        if (!identityProvider.hasModeratorRole(keycloakId)) {
+            if (identityProvider.hasUserRole(keycloakId)) {
                 throw new CannotDowngradeUserException(
-                        "Cannot downgrade user with email: " + email
+                        "Cannot downgrade user with id: " + keycloakId
                 );
             }
 
             throw new CannotDowngradeAdminException(
-                    "Cannot downgrade admin with email: " + email
+                    "Cannot downgrade admin with id: " + keycloakId
             );
         }
 
 
-        identityProvider.downgradeModerator(email);
+        identityProvider.downgradeModerator(keycloakId);
 
     }
 
     public void promoteToModerator(String email) {
 
-        if (identityProvider.hasModeratorRole(email)) {
-            throw new AlreadyIsModeratorException("Cannot promote moderator with email: " + email);
+        UUID keycloakId = getKeycloakIdByEmail(email);
+
+        if (identityProvider.hasModeratorRole(keycloakId)) {
+            throw new AlreadyIsModeratorException("Cannot promote moderator with id: " + keycloakId);
         }
 
-        if (identityProvider.hasAdminRole(email)) {
-            throw new CannotPromoteAdminException("Cannot promote admin with email: " + email);
+        if (identityProvider.hasAdminRole(keycloakId)) {
+            throw new CannotPromoteAdminException("Cannot promote admin with id: " + keycloakId);
         }
 
-        identityProvider.promoteToModerator(email);
+        identityProvider.promoteToModerator(keycloakId);
+    }
+
+    private UUID getKeycloakIdByEmail(String email) {
+
+        return userRepository.getUserByEmail(email).orElseThrow(
+                () -> new UserNotFoundException(
+                        "User not found with email" + email
+                )
+        ).getKeycloakId();
+
     }
 }

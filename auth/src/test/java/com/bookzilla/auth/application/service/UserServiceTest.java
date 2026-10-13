@@ -146,7 +146,7 @@ public class UserServiceTest {
                 "USER"
         );
 
-        when(identityProvider.getUserRoleByEmail(user.getEmail())).thenReturn("USER");
+        when(identityProvider.getUserRoleByKeycloakId(user.getKeycloakId())).thenReturn("USER");
         when(userRepository.getUserByKeycloakId(keycloakId)).thenReturn(Optional.of(user));
 
 
