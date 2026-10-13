@@ -2,6 +2,7 @@ package com.bookzilla.auth.infrastructure.web.controller;
 
 import com.bookzilla.auth.application.dto.UserInfo;
 import com.bookzilla.auth.application.dto.UserShortInfo;
+import com.bookzilla.auth.application.service.UserAdministrationService;
 import com.bookzilla.auth.application.service.UserService;
 import com.bookzilla.auth.infrastructure.web.dto.DeleteUserRequest;
 import com.bookzilla.auth.infrastructure.web.dto.GetUserInfoRequest;
@@ -15,22 +16,24 @@ import java.util.List;
 @RequestMapping("/api/moderator")
 public class ModeratorController {
 
+    private final UserAdministrationService userAdministrationService;
     private final UserService userService;
 
-    public ModeratorController(UserService userService) {
+    public ModeratorController(UserAdministrationService userAdministrationService, UserService userService) {
+        this.userAdministrationService = userAdministrationService;
         this.userService = userService;
     }
 
     @SecurityRequirement(name = "oauth2")
     @PostMapping("/delete-user")
     public void deleteUser(@Valid @RequestBody DeleteUserRequest deleteUserRequest){
-        userService.deleteUser(deleteUserRequest.email());
+        userAdministrationService.deleteUser(deleteUserRequest.email());
     }
 
     @SecurityRequirement(name = "oauth2")
     @GetMapping("/get-all-users")
     public List<UserShortInfo> getAllUsers() {
-        return userService.getAllUsers();
+        return userAdministrationService.getAllUsers();
     }
 
     @SecurityRequirement(name = "oauth2")

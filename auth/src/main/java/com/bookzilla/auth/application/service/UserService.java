@@ -1,21 +1,16 @@
 package com.bookzilla.auth.application.service;
 
 import com.bookzilla.auth.application.dto.UserInfo;
-import com.bookzilla.auth.application.dto.UserShortInfo;
-import com.bookzilla.auth.application.exception.CannotDeleteModeratorException;
 import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
 import com.bookzilla.auth.application.exception.UserNotFoundException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.User;
-import com.bookzilla.contracts.event.DeleteUserRepresentation;
 import com.bookzilla.contracts.event.UserRegistered;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -99,52 +94,6 @@ public class UserService {
         user.updateAdditionalInfo(country, city, phone);
     }
 
-
-    public void deleteUser(String email) {
-
-        User user = userRepository.getUserByEmail(email)
-                .orElseThrow(() ->
-                        new UserNotFoundException(
-                                "User not found by email: " + email
-                        )
-                );
-
-        if (!identityProvider.hasUserRole(email)) {
-            throw new CannotDeleteModeratorException("Moderators cannot delete other moderators");
-        }
-
-        identityProvider.deleteKeycloakUserRepresentation(email);
-
-        userRepository.deleteUserByEmail(email);
-
-        UUID userToDeleteUuid = user.getId();
-
-        DeleteUserRepresentation deleteUserRepresentationEvent =
-                new DeleteUserRepresentation(userToDeleteUuid);
-
-        applicationEventPublisher.publishEvent(deleteUserRepresentationEvent);
-
-    }
-
-    public List<UserShortInfo> getAllUsers() {
-
-        List<User> users = userRepository.getAllUsers();
-
-        Map<String, String> rolesByEmails =
-                identityProvider.getUsersRolesByEmails(users.stream()
-                                                            .map(User::getEmail)
-                                                            .toList());
-
-        return users.stream()
-                .map(user -> new UserShortInfo(
-                        user.getEmail(),
-                        user.getFirstName(),
-                        user.getLastName(),
-                        user.getRegistrationDate(),
-                        rolesByEmails.get(user.getEmail())
-                ))
-                .toList();
-    }
 
     private UserInfo toUserInfo(User user) {
 
