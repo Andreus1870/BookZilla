@@ -1,7 +1,7 @@
 package com.bookzilla.auth.application.service;
 
 import com.bookzilla.auth.application.port.out.TokenProvider;
-import com.bookzilla.auth.infrastructure.web.dto.RefreshTokenResponse;
+import com.bookzilla.auth.application.dto.RefreshTokenResponse;
 import org.springframework.stereotype.Service;
 
 @Service
