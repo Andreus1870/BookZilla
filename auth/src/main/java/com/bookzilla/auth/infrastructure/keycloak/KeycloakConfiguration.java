@@ -1,4 +1,4 @@
-package com.bookzilla.auth.infrastructure.identity;
+package com.bookzilla.auth.infrastructure.keycloak;
 
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;

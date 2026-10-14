@@ -1,4 +1,4 @@
-package com.bookzilla.auth.infrastructure.token;
+package com.bookzilla.auth.infrastructure.keycloak.token;
 
 import com.bookzilla.auth.application.dto.RefreshTokenResponse;
 import com.bookzilla.auth.application.port.out.TokenProvider;
