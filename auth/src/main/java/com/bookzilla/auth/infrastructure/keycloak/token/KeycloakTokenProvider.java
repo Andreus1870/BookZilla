@@ -2,6 +2,7 @@ package com.bookzilla.auth.infrastructure.keycloak.token;
 
 import com.bookzilla.auth.application.dto.RefreshTokenResponse;
 import com.bookzilla.auth.application.port.out.TokenProvider;
+import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUnexpectedResponseException;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -44,7 +45,7 @@ public class KeycloakTokenProvider implements TokenProvider {
                 .body(KeycloakTokenResponse.class);
 
         if (response == null) {
-            throw new IllegalStateException(
+            throw new KeycloakUnexpectedResponseException(
                     "Keycloak returned an empty token response"
             );
         }
