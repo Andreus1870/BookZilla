@@ -27,7 +27,7 @@ public interface IdentityProvider {
 
     void deleteKeycloakUserRepresentation(UUID keycloakId);
 
-    String getUserRoleByKeycloakId(UUID keycloakId);
+    BusinessRole getUserRoleByKeycloakId(UUID keycloakId);
 
     Map<UUID, String> getUsersRolesByKeycloakIds(List<UUID> keycloakIds);
 }

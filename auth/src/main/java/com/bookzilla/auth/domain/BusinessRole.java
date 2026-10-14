@@ -4,4 +4,6 @@ public enum BusinessRole {
     USER,
     MODERATOR,
     ADMIN
+
+
 }
