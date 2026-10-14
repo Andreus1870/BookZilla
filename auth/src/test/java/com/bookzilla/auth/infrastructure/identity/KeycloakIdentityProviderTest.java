@@ -1,6 +1,6 @@
 package com.bookzilla.auth.infrastructure.identity;
 
-import com.bookzilla.auth.application.exception.KeycloakUserCreationException;
+import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUserCreationException;
 import com.bookzilla.auth.infrastructure.keycloak.identity.KeycloakIdentityProvider;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
