@@ -105,7 +105,7 @@ public class UserService {
                 user.getCountry(),
                 user.getCity(),
                 user.getRegistrationDate().toString(),
-                identityProvider.getUserRoleByKeycloakId(user.getKeycloakId())
+                identityProvider.getUserRoleByKeycloakId(user.getKeycloakId()).name()
         );
 
     }

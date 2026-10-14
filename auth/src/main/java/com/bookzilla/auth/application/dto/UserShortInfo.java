@@ -1,5 +1,7 @@
 package com.bookzilla.auth.application.dto;
 
+import com.bookzilla.auth.domain.BusinessRole;
+
 import java.time.Instant;
 
 public record UserShortInfo(
@@ -12,6 +14,6 @@ public record UserShortInfo(
 
         Instant registrationDate,
 
-        String role
+        BusinessRole role
 ) {
 }

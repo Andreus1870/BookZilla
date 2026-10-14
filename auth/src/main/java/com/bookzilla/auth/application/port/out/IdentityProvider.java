@@ -29,5 +29,5 @@ public interface IdentityProvider {
 
     BusinessRole getUserRoleByKeycloakId(UUID keycloakId);
 
-    Map<UUID, String> getUsersRolesByKeycloakIds(List<UUID> keycloakIds);
+    Map<UUID, BusinessRole> getUsersRolesByKeycloakIds(List<UUID> keycloakIds);
 }

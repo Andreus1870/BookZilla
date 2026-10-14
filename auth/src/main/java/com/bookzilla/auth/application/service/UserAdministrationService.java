@@ -5,6 +5,7 @@ import com.bookzilla.auth.application.exception.CannotDeleteModeratorException;
 import com.bookzilla.auth.application.exception.UserNotFoundException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
+import com.bookzilla.auth.domain.BusinessRole;
 import com.bookzilla.auth.domain.User;
 import com.bookzilla.contracts.event.DeleteUserRepresentation;
 import org.springframework.context.ApplicationEventPublisher;
@@ -63,7 +64,7 @@ public class UserAdministrationService {
 
         List<User> users = userRepository.getAllUsers();
 
-        Map<UUID, String> rolesByKeycloakIds =
+        Map<UUID, BusinessRole> rolesByKeycloakIds =
                 identityProvider.getUsersRolesByKeycloakIds(users.stream()
                         .map(User::getKeycloakId)
                         .toList());

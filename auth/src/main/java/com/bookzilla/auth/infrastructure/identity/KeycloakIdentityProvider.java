@@ -56,31 +56,31 @@ public class KeycloakIdentityProvider implements IdentityProvider {
     @Override
     public boolean hasUserRole(UUID keycloakId) {
 
-        return hasRole(keycloakId, BusinessRole.USER.name());
+        return hasRole(keycloakId, BusinessRole.USER);
     }
 
     @Override
     public boolean hasModeratorRole(UUID keycloakId) {
 
-        return hasRole(keycloakId, BusinessRole.MODERATOR.name());
+        return hasRole(keycloakId, BusinessRole.MODERATOR);
     }
 
     @Override
     public boolean hasAdminRole(UUID keycloakId) {
 
-        return hasRole(keycloakId, BusinessRole.ADMIN.name());
+        return hasRole(keycloakId, BusinessRole.ADMIN);
     }
 
     @Override
     public void promoteToModerator(UUID keycloakId) {
 
-        changeRole(keycloakId, BusinessRole.USER.name(), BusinessRole.MODERATOR.name());
+        changeRole(keycloakId, BusinessRole.USER, BusinessRole.MODERATOR);
     }
 
     @Override
     public void downgradeModerator(UUID keycloakId) {
 
-        changeRole(keycloakId, BusinessRole.MODERATOR.name(), BusinessRole.USER.name());
+        changeRole(keycloakId, BusinessRole.MODERATOR, BusinessRole.USER);
     }
 
     @Override
@@ -101,12 +101,12 @@ public class KeycloakIdentityProvider implements IdentityProvider {
     }
 
     @Override
-    public Map<UUID, String> getUsersRolesByKeycloakIds(List<UUID> keycloakIds) {
+    public Map<UUID, BusinessRole> getUsersRolesByKeycloakIds(List<UUID> keycloakIds) {
 
-        Map<UUID, String> rolesByKeycloakIds = new HashMap<>();
+        Map<UUID, BusinessRole> rolesByKeycloakIds = new HashMap<>();
 
         keycloakIds.forEach(id -> {
-            String role = getUserRoleByKeycloakId(id);
+            BusinessRole role = getUserRoleByKeycloakId(id);
 
             rolesByKeycloakIds.put(id, role);
         });
@@ -115,11 +115,12 @@ public class KeycloakIdentityProvider implements IdentityProvider {
     }
 
     @Override
-    public String getUserRoleByKeycloakId(UUID keycloakId) {
+    public BusinessRole getUserRoleByKeycloakId(UUID keycloakId) {
 
         return getUserRoles(keycloakId).stream()
                 .map(RoleRepresentation::getName)
                 .filter(BUSINESS_ROLES::contains)
+                .map(BusinessRole::valueOf)
                 .findFirst()
                 .orElseThrow(() ->
                         new IllegalStateException("Business role was not found for user with id: " + keycloakId)
@@ -209,14 +210,15 @@ public class KeycloakIdentityProvider implements IdentityProvider {
         return user;
     }
 
-    private boolean hasRole(UUID keycloakId, String roleName) {
+    private boolean hasRole(UUID keycloakId, BusinessRole roleName) {
 
         return getUserRoles(keycloakId)
                 .stream()
-                .anyMatch(role -> roleName.equals(role.getName()));
+                .anyMatch(role ->
+                        roleName.name().equals(role.getName()));
     }
 
-    private void changeRole(UUID keycloakId, String oldRole, String newRole) {
+    private void changeRole(UUID keycloakId, BusinessRole oldRole, BusinessRole newRole) {
 
         RoleMappingResource roleMapping = keycloak.realm(keycloakRealm)
                 .users()
@@ -225,12 +227,12 @@ public class KeycloakIdentityProvider implements IdentityProvider {
 
         RoleRepresentation oldRoleRepresentation = keycloak.realm(keycloakRealm)
                 .roles()
-                .get(oldRole)
+                .get(oldRole.name())
                 .toRepresentation();
 
         RoleRepresentation newRoleRepresentation = keycloak.realm(keycloakRealm)
                 .roles()
-                .get(newRole)
+                .get(newRole.name())
                 .toRepresentation();
 
         roleMapping.realmLevel().remove(List.of(oldRoleRepresentation));

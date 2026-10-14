@@ -4,6 +4,7 @@ import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
 import com.bookzilla.auth.application.exception.UserNotFoundException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
+import com.bookzilla.auth.domain.BusinessRole;
 import com.bookzilla.auth.domain.User;
 import com.bookzilla.auth.application.dto.UserInfo;
 import com.bookzilla.contracts.event.UserRegistered;
@@ -146,7 +147,7 @@ public class UserServiceTest {
                 "USER"
         );
 
-        when(identityProvider.getUserRoleByKeycloakId(user.getKeycloakId())).thenReturn("USER");
+        when(identityProvider.getUserRoleByKeycloakId(user.getKeycloakId())).thenReturn(BusinessRole.USER);
         when(userRepository.getUserByKeycloakId(keycloakId)).thenReturn(Optional.of(user));
 
 
