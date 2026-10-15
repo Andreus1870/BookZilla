@@ -7,29 +7,33 @@ import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.User;
 import com.bookzilla.contracts.event.UserRegistered;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.UUID;
 
 @Service
-@Transactional(transactionManager = "userTransactionManager")
 public class UserService {
 
     private final UserRepository userRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final IdentityProvider identityProvider;
+    private final TransactionTemplate transactionTemplate;
 
 
     public UserService(UserRepository userRepository,
                        ApplicationEventPublisher applicationEventPublisher,
-                       IdentityProvider keycloakIdentityProvider) {
+                       IdentityProvider identityProvider,
+                       @Qualifier("userTransactionManager") PlatformTransactionManager transactionManager) {
         this.userRepository = userRepository;
         this.applicationEventPublisher = applicationEventPublisher;
-        this.identityProvider = keycloakIdentityProvider;
+        this.identityProvider = identityProvider;
+        this.transactionTemplate = new TransactionTemplate(transactionManager);
     }
-
 
     public void register(String firstName,
                          String lastName,
@@ -40,20 +44,29 @@ public class UserService {
             throw new EmailAlreadyRegisteredException("Email is already registered!");
         }
 
-        UUID keycloakUserId =
-                identityProvider.createIdentity(firstName, lastName, email, password);
+        UUID keycloakUserId = identityProvider.createIdentity(
+                firstName, lastName, email, password
+        );
 
-        User user = new User(firstName, lastName, email, keycloakUserId);
 
-        userRepository.save(user);
+        transactionTemplate.executeWithoutResult(status -> {
 
-        UserRegistered userRegisteredEvent =
-                new UserRegistered(user.getId());
+            User user = new User(
+                    firstName, lastName, email, keycloakUserId
+            );
 
-        applicationEventPublisher.publishEvent(userRegisteredEvent);
+            userRepository.save(user);
+
+            applicationEventPublisher.publishEvent(
+                    new UserRegistered(user.getId())
+            );
+
+        });
+
     }
 
 
+    @Transactional(transactionManager = "userTransactionManager")
     public UserInfo getUserInfoByKeycloakId(UUID keycloakId) {
 
         User user = userRepository.getUserByKeycloakId(keycloakId)
@@ -66,6 +79,7 @@ public class UserService {
         return toUserInfo(user);
     }
 
+    @Transactional(transactionManager = "userTransactionManager")
     public UserInfo getUserInfoByEmail(String email){
 
         User user = userRepository.getUserByEmail(email)
@@ -79,6 +93,7 @@ public class UserService {
     }
 
 
+    @Transactional(transactionManager = "userTransactionManager")
     public void setAdditionalUserInfo(UUID keycloakId,
                                       String country,
                                       String city,
