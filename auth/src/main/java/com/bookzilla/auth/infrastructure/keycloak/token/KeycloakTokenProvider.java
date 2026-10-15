@@ -54,6 +54,12 @@ public class KeycloakTokenProvider implements TokenProvider {
         } catch (HttpClientErrorException.BadRequest exception) {
             throw translateBadRequest(exception);
 
+        } catch (HttpClientErrorException exception) {
+            throw new KeycloakUnexpectedResponseException(
+                    "Keycloak token endpoint returned an unexpecter client error",
+                    exception
+            );
+
         } catch (HttpServerErrorException exception) {
             throw new KeycloakUnexpectedResponseException(
                     "Keycloak token endpoint returned a server error",
