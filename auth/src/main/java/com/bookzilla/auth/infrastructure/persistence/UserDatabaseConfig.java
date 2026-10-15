@@ -1,6 +1,6 @@
 package com.bookzilla.auth.infrastructure.persistence;
 
-import com.bookzilla.auth.domain.User;
+import com.bookzilla.auth.infrastructure.persistence.entity.UserJpaEntity;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
 import org.flywaydb.core.Flyway;
@@ -62,7 +62,7 @@ public class UserDatabaseConfig {
 
         return builder
                 .dataSource(dataSource)
-                .packages(User.class)
+                .packages(UserJpaEntity.class)
                 .persistenceUnit("user")
                 .build();
     }

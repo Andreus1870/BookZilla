@@ -7,8 +7,6 @@ import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.User;
 import com.bookzilla.contracts.event.UserRegistered;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -27,8 +25,6 @@ public class UserService {
     private final ApplicationEventPublisher applicationEventPublisher;
     private final IdentityProvider identityProvider;
     private final TransactionTemplate transactionTemplate;
-
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
 
     public UserService(UserRepository userRepository,
@@ -126,6 +122,8 @@ public class UserService {
                 );
 
         user.updateAdditionalInfo(country, city, phone);
+
+        userRepository.save(user);
     }
 
 
@@ -143,69 +141,4 @@ public class UserService {
         );
 
     }
-
-
-
-
-    /*
-    * public void register(String firstName,
-                     String lastName,
-                     String email,
-                     String password) {
-
-    if (userRepository.existsByEmail(email)) {
-        throw new EmailAlreadyRegisteredException(
-                "Email is already registered!"
-        );
-    }
-
-    UUID keycloakUserId = identityProvider.createIdentity(
-            firstName, lastName, email, password
-    );
-
-    AtomicInteger transactionOutcome = new AtomicInteger(
-            TransactionSynchronization.STATUS_UNKNOWN
-    );
-
-    try {
-        transactionTemplate.executeWithoutResult(status -> {
-
-            TransactionSynchronizationManager.registerSynchronization(
-                    new TransactionSynchronization() {
-                        @Override
-                        public void afterCompletion(int completionStatus) {
-                            transactionOutcome.set(completionStatus);
-                        }
-                    }
-            );
-
-            User user = new User(
-                    firstName, lastName, email, keycloakUserId
-            );
-
-            userRepository.save(user);
-
-            applicationEventPublisher.publishEvent(
-                    new UserRegistered(user.getId())
-            );
-        });
-
-    } catch (RuntimeException exception) {
-
-        if (transactionOutcome.get()
-                == TransactionSynchronization.STATUS_ROLLED_BACK) {
-
-            try {
-                identityProvider.deleteKeycloakUserRepresentation(
-                        keycloakUserId
-                );
-            } catch (RuntimeException compensationException) {
-                exception.addSuppressed(compensationException);
-            }
-        }
-
-        throw exception;
-    }
-}
-* */
 }

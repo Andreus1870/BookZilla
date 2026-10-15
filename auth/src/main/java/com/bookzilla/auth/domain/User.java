@@ -1,43 +1,28 @@
 package com.bookzilla.auth.domain;
 
-import jakarta.persistence.*;
-
 import java.time.Instant;
 import java.util.UUID;
 
-@Entity
-@Table(name = "users")
 public class User {
 
-    @Id
-    private UUID id;
+    private final UUID id;
 
-    @Column(name = "keycloak_id", nullable = false, unique = true)
-    private UUID keycloakId;
+    private final UUID keycloakId;
 
-    @Column(name = "first_name", length = 100, nullable = false)
     private String firstName;
 
-    @Column(name = "last_name", length = 100, nullable = false)
     private String lastName;
 
-    @Column(name = "email", length = 254, nullable = false, unique = true)
     private String email;
 
-    @Column(name = "phone", length = 32)
     private String phone;
 
-    @Column(name = "country", length = 100)
     private String country;
 
-    @Column(name = "city", length = 100)
     private String city;
 
-    @Column(name = "registration_date", nullable = false)
-    private Instant registrationDate;
+    private final Instant registrationDate;
 
-    public User() {
-    }
 
     public User(String firstName, String lastName, String email, UUID keycloakId) {
         this.id = UUID.randomUUID();
@@ -48,28 +33,25 @@ public class User {
         this.registrationDate = Instant.now();
     }
 
-    public void setFirstName(String firstName) {
+    public User(UUID id,
+                UUID keycloakId,
+                String firstName,
+                String lastName,
+                String email,
+                String phone,
+                String country,
+                String city,
+                Instant registrationDate) {
+
+        this.id = id;
+        this.keycloakId = keycloakId;
         this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public void setEmail(String email) {
         this.email = email;
-    }
-
-    public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public void setCountry(String country) {
         this.country = country;
-    }
-
-    public void setCity(String city) {
         this.city = city;
+        this.registrationDate = registrationDate;
     }
 
     public UUID getId() {

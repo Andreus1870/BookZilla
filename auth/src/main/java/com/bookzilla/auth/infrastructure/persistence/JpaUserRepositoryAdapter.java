@@ -2,7 +2,7 @@ package com.bookzilla.auth.infrastructure.persistence;
 
 import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.bookzilla.auth.infrastructure.persistence.mapper.UserMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -11,15 +11,24 @@ import java.util.UUID;
 
 @Component
 public class JpaUserRepositoryAdapter implements UserRepository {
-    private final JpaUserRepository jpaUserRepository;
 
-    public JpaUserRepositoryAdapter(JpaUserRepository jpaUserRepository) {
+    private final JpaUserRepository jpaUserRepository;
+    private final UserMapper userMapper;
+
+    public JpaUserRepositoryAdapter(JpaUserRepository jpaUserRepository,
+                                    UserMapper userMapper) {
         this.jpaUserRepository = jpaUserRepository;
+        this.userMapper = userMapper;
     }
+
 
     @Override
     public User save(User user) {
-        return jpaUserRepository.save(user);
+        return userMapper.toDomain(
+                jpaUserRepository.save(
+                    userMapper.toEntity(user)
+                )
+        );
     }
 
     @Override
@@ -29,12 +38,14 @@ public class JpaUserRepositoryAdapter implements UserRepository {
 
     @Override
     public Optional<User> getUserByEmail(String email) {
-        return jpaUserRepository.findByEmailIgnoreCase(email);
+        return jpaUserRepository.findByEmailIgnoreCase(email)
+                .map(userMapper::toDomain);
     }
 
     @Override
     public Optional<User> getUserByKeycloakId(UUID userId){
-        return jpaUserRepository.getUserByKeycloakId(userId);
+        return jpaUserRepository.getUserByKeycloakId(userId)
+                .map(userMapper::toDomain);
     }
 
     @Override
@@ -44,6 +55,9 @@ public class JpaUserRepositoryAdapter implements UserRepository {
 
     @Override
     public List<User> getAllUsers() {
-        return jpaUserRepository.findAll();
+        return jpaUserRepository.findAll()
+                .stream()
+                .map(userMapper::toDomain)
+                .toList();
     }
 }
