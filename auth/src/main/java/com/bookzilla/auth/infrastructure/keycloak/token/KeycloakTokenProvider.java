@@ -8,6 +8,7 @@ import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUnexpectedRe
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -15,6 +16,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
+
+import java.net.http.HttpClient;
+import java.time.Duration;
 
 @Component
 public class KeycloakTokenProvider implements TokenProvider {
@@ -28,9 +32,21 @@ public class KeycloakTokenProvider implements TokenProvider {
             @Value("${keycloak.oauth.token-url}") String tokenUrl,
             @Value("${keycloak.oauth.client-id}") String clientId
     ) {
-        this.restClient = restClientBuilder.build();
         this.tokenUrl = tokenUrl;
         this.clientId = clientId;
+
+        HttpClient httpClient = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(5))
+                .build();
+
+        JdkClientHttpRequestFactory requestFactory =
+                new JdkClientHttpRequestFactory(httpClient);
+
+        requestFactory.setReadTimeout(Duration.ofSeconds(5));
+
+        this.restClient = restClientBuilder
+                .requestFactory(requestFactory)
+                .build();
     }
 
     @Override
@@ -51,12 +67,13 @@ public class KeycloakTokenProvider implements TokenProvider {
                     .body(form)
                     .retrieve()
                     .body(KeycloakTokenResponse.class);
+
         } catch (HttpClientErrorException.BadRequest exception) {
             throw translateBadRequest(exception);
 
         } catch (HttpClientErrorException exception) {
             throw new KeycloakUnexpectedResponseException(
-                    "Keycloak token endpoint returned an unexpecter client error",
+                    "Keycloak token endpoint returned an unexpected client error",
                     exception
             );
 
