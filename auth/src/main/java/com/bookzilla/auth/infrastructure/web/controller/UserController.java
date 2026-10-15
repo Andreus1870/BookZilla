@@ -4,6 +4,7 @@ import com.bookzilla.auth.application.service.UserService;
 import com.bookzilla.auth.infrastructure.web.dto.SetAdditionalInfoRequest;
 import com.bookzilla.auth.application.dto.UserInfo;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,10 @@ public class UserController {
     }
 
 
-    @SecurityRequirement(name = "oauth2")
+    @SecurityRequirements({
+            @SecurityRequirement(name = "oauth2"),
+            @SecurityRequirement(name = "bearerAuth")
+    })
     @GetMapping("/me")
     public UserInfo getUserInfo(Authentication authentication){
         UUID keycloakUserId = UUID.fromString(authentication.getName());
@@ -30,7 +34,10 @@ public class UserController {
     }
 
 
-    @SecurityRequirement(name = "oauth2")
+    @SecurityRequirements({
+            @SecurityRequirement(name = "oauth2"),
+            @SecurityRequirement(name = "bearerAuth")
+    })
     @PostMapping("/set-additional-info")
     public void setAdditionalUserInfo(Authentication authentication,
                                 @RequestBody @Validated SetAdditionalInfoRequest request){

@@ -1,4 +1,4 @@
-package com.bookzilla.auth.infrastructure.identity;
+package com.bookzilla.auth.infrastructure.keycloak;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

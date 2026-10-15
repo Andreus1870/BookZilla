@@ -22,6 +22,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
+                                "/swagger/token-refresh.js",
                                 "/v3/api-docs/**",
                                 "/api/auth/**"
                         ).permitAll()

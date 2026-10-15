@@ -1,4 +1,4 @@
-package com.bookzilla.auth.application.exception;
+package com.bookzilla.auth.infrastructure.keycloak.exception;
 
 public class KeycloakUserCreationException extends RuntimeException {
     public KeycloakUserCreationException(String message) {
