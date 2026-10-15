@@ -2,6 +2,7 @@ package com.bookzilla.auth.infrastructure.keycloak.token;
 
 import com.bookzilla.auth.application.dto.RefreshTokenResponse;
 import com.bookzilla.auth.application.port.out.TokenProvider;
+import com.bookzilla.auth.infrastructure.keycloak.exception.InvalidRefreshTokenException;
 import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUnexpectedResponseException;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 @Component
@@ -37,12 +39,18 @@ public class KeycloakTokenProvider implements TokenProvider {
         form.add("client_id", clientId);
         form.add("refresh_token", refreshToken);
 
-        KeycloakTokenResponse response = restClient.post()
-                .uri(tokenUrl)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(form)
-                .retrieve()
-                .body(KeycloakTokenResponse.class);
+        KeycloakTokenResponse response;
+
+        try {
+            response = restClient.post()
+                    .uri(tokenUrl)
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .body(form)
+                    .retrieve()
+                    .body(KeycloakTokenResponse.class);
+        } catch (HttpClientErrorException.BadRequest exception) {
+            throw translateBadRequest(exception);
+        }
 
         if (response == null) {
             throw new KeycloakUnexpectedResponseException(
@@ -59,6 +67,30 @@ public class KeycloakTokenProvider implements TokenProvider {
         );
     }
 
+    private RuntimeException translateBadRequest(
+            HttpClientErrorException.BadRequest exception
+    ) {
+        KeycloakErrorResponse error;
+
+        try {
+            error = exception.getResponseBodyAs(KeycloakErrorResponse.class);
+        } catch (RuntimeException parsingException) {
+            return new KeycloakUnexpectedResponseException(
+                    "Failed to parse Keycloak error response",
+                    parsingException
+            );
+        }
+
+        if (error != null && "invalid_grant".equals(error.error())) {
+            return new InvalidRefreshTokenException();
+        }
+
+        return new KeycloakUnexpectedResponseException(
+                "Unexpected error from Keycloak token endpoint",
+                exception
+        );
+    }
+
     private record KeycloakTokenResponse(
             @JsonProperty("access_token") String accessToken,
             @JsonProperty("refresh_token") String refreshToken,
@@ -66,5 +98,10 @@ public class KeycloakTokenProvider implements TokenProvider {
             @JsonProperty("refresh_expires_in") Integer refreshExpiresIn,
             @JsonProperty("token_type") String tokenType
     ) {
+    }
+
+    private record KeycloakErrorResponse(
+            String error
+    ){
     }
 }
