@@ -3,6 +3,7 @@ package com.bookzilla.auth.infrastructure.keycloak.token;
 import com.bookzilla.auth.application.dto.RefreshTokenResponse;
 import com.bookzilla.auth.application.port.out.TokenProvider;
 import com.bookzilla.auth.infrastructure.keycloak.exception.InvalidRefreshTokenException;
+import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUnavailableException;
 import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUnexpectedResponseException;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 
 @Component
@@ -50,6 +53,18 @@ public class KeycloakTokenProvider implements TokenProvider {
                     .body(KeycloakTokenResponse.class);
         } catch (HttpClientErrorException.BadRequest exception) {
             throw translateBadRequest(exception);
+
+        } catch (HttpServerErrorException exception) {
+            throw new KeycloakUnexpectedResponseException(
+                    "Keycloak token endpoint returned a server error",
+                    exception
+            );
+
+        } catch (ResourceAccessException exception) {
+            throw new KeycloakUnavailableException(
+                    "Failed to communicate with Keycloak token endpoint",
+                    exception
+            );
         }
 
         if (response == null) {

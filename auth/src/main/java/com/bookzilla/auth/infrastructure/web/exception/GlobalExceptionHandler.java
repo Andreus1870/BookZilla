@@ -2,6 +2,7 @@ package com.bookzilla.auth.infrastructure.web.exception;
 
 import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
 import com.bookzilla.auth.infrastructure.keycloak.exception.InvalidRefreshTokenException;
+import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUnavailableException;
 import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUnexpectedResponseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,5 +29,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidRefreshTokenException.class)
     public ResponseEntity<Void> handleInvalidRefreshToken() {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @ExceptionHandler(KeycloakUnavailableException.class)
+    public ResponseEntity<Void> handleKeycloakUnavailable() {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
     }
 }
