@@ -9,11 +9,11 @@ public class User {
 
     private final UUID keycloakId;
 
-    private String firstName;
+    private final String firstName;
 
-    private String lastName;
+    private final String lastName;
 
-    private String email;
+    private final String email;
 
     private String phone;
 
@@ -24,7 +24,11 @@ public class User {
     private final Instant registrationDate;
 
 
-    public User(String firstName, String lastName, String email, UUID keycloakId) {
+    public User(String firstName,
+                String lastName,
+                String email,
+                UUID keycloakId) {
+
         this.id = UUID.randomUUID();
         this.keycloakId = keycloakId;
         this.firstName = firstName;
