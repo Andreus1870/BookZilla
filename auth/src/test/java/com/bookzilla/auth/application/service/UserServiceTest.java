@@ -92,6 +92,36 @@ public class UserServiceTest {
 
 
     @Test
+    void shouldDeleteKeycloakIdentityWhenDatabaseTransactionRollsBack() {
+
+        // arrange
+        String firstName = "John";
+        String lastName = "Doe";
+        String password = "password123";
+        String email = "john@example.com";
+        UUID keycloakId = UUID.randomUUID();
+
+        when(userRepository.existsByEmail(email)).thenReturn(false);
+        when(identityProvider.createIdentity(firstName, lastName, email, password))
+                .thenReturn(keycloakId);
+
+        when(userRepository.save(any(User.class)))
+                .thenThrow(new RuntimeException("Database save failed"));
+
+        // act and assert
+        assertThrows(RuntimeException.class,
+                () -> userService.register(firstName, lastName, email, password)
+        );
+
+        // assert compensation
+        verify(identityProvider).deleteKeycloakUserRepresentation(keycloakId);
+
+        verify(applicationEventPublisher, never()).publishEvent(any(Object.class));
+
+
+    }
+
+    @Test
     void shouldNotSaveUserWhenIdentityCreationFails() {
         // arrange
         String firstName = "John";
