@@ -3,6 +3,7 @@ package com.bookzilla.integration;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.domain.User;
 import com.bookzilla.auth.infrastructure.persistence.JpaUserRepository;
+import com.bookzilla.auth.infrastructure.persistence.mapper.UserMapper;
 import com.bookzilla.booking.domain.Client;
 import com.bookzilla.booking.domain.Provider;
 import com.bookzilla.booking.infrastructure.persistence.client.JpaClientRepository;
@@ -45,6 +46,9 @@ public class UserRegistrationIntegrationTest {
 
     @Autowired
     private JpaClientRepository jpaClientRepository;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @MockitoBean
     private IdentityProvider IdentityProvider;
@@ -96,6 +100,7 @@ public class UserRegistrationIntegrationTest {
 
         User user = jpaUserRepository
                 .findByEmailIgnoreCase("andrii@test.com")
+                .map(userMapper::toDomain)
                 .orElseThrow();
 
         assertEquals("Andrii", user.getFirstName());
