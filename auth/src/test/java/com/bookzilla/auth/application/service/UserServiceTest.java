@@ -1,20 +1,23 @@
 package com.bookzilla.auth.application.service;
 
+import com.bookzilla.auth.application.dto.UserInfo;
 import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
 import com.bookzilla.auth.application.exception.UserNotFoundException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.BusinessRole;
 import com.bookzilla.auth.domain.User;
-import com.bookzilla.auth.application.dto.UserInfo;
 import com.bookzilla.contracts.event.UserRegistered;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.support.AbstractPlatformTransactionManager;
+import org.springframework.transaction.support.DefaultTransactionStatus;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -34,9 +37,17 @@ public class UserServiceTest {
     @Mock
     private IdentityProvider identityProvider;
 
-    @InjectMocks
     private UserService userService;
 
+    @BeforeEach
+    void setUp() {
+        userService = new UserService(
+                userRepository,
+                applicationEventPublisher,
+                identityProvider,
+                new TestTransactionManager()
+        );
+    }
 
     @Test
     void shouldRegisterUserSuccessfully(){
@@ -74,6 +85,8 @@ public class UserServiceTest {
         verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
         UserRegistered sentEvent = eventCaptor.getValue();
         assertThat(sentEvent.userId()).isEqualTo(savedUser.getId());
+
+        verify(identityProvider, never()).deleteKeycloakUserRepresentation(any(UUID.class));
 
     }
 
@@ -178,6 +191,31 @@ public class UserServiceTest {
 
         assertThat(exception.getMessage())
                 .isEqualTo("User not found by Keycloak ID: " + keycloakId);
+    }
+
+
+    private static class TestTransactionManager extends AbstractPlatformTransactionManager {
+
+        @Override
+        protected Object doGetTransaction() {
+            return new Object();
+        }
+
+        @Override
+        protected void doBegin(Object transaction,
+                               TransactionDefinition definition) {
+
+        }
+
+        @Override
+        protected void doCommit(DefaultTransactionStatus status) {
+
+        }
+
+        @Override
+        protected void doRollback(DefaultTransactionStatus status) {
+
+        }
     }
 
 }
