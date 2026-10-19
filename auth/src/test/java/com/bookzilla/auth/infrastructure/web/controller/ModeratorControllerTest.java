@@ -1,10 +1,12 @@
 package com.bookzilla.auth.infrastructure.web.controller;
 
+import com.bookzilla.auth.application.dto.UserInfo;
 import com.bookzilla.auth.application.dto.UserShortInfo;
 import com.bookzilla.auth.application.service.UserAdministrationService;
 import com.bookzilla.auth.application.service.UserService;
 import com.bookzilla.auth.domain.BusinessRole;
 import com.bookzilla.auth.infrastructure.web.dto.DeleteUserRequest;
+import com.bookzilla.auth.infrastructure.web.dto.GetUserInfoRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -95,8 +97,37 @@ public class ModeratorControllerTest {
 
 
     }
-//
-//    shouldDelegateUserInfoRetrievalToUserService(){
-//
-//    }
+
+    @Test
+    void shouldDelegateUserInfoRetrievalToUserService(){
+
+        // arrange
+
+        String email = "roosevelt@example.com";
+        String firstName = "Theodor";
+        String lastName = "Roosevelt";
+        Instant registrationDate = Instant.now();
+
+        GetUserInfoRequest getUserInfoRequest = new GetUserInfoRequest(email);
+
+        UserInfo userInfo = new UserInfo(
+                firstName,
+                lastName,
+                email,
+                null,
+                null,
+                null,
+                registrationDate.toString(),
+                BusinessRole.USER.name()
+        );
+
+        when(userService.getUserInfoByEmail(email)).thenReturn(userInfo);
+
+        // act
+        UserInfo result = moderatorController.getUserInfo(getUserInfoRequest);
+
+        // assert
+        verify(userService).getUserInfoByEmail(email);
+        assertThat(result).isSameAs(userInfo);
+    }
 }
