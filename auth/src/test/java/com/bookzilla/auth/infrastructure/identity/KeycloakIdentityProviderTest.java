@@ -254,4 +254,52 @@ public class KeycloakIdentityProviderTest {
         assertThat(exception.getMessage())
                 .isEqualTo("Keycloak did not return an ID for the created user");
     }
+
+
+
+    @Test
+    void shouldDeleteKeycloakUserSuccessfully() {
+        //arrange
+        UUID keycloakId = UUID.randomUUID();
+
+        when(keycloak.realm(KEYCLOAK_REALM))
+                .thenReturn(realmResource);
+
+        when(realmResource.users())
+                .thenReturn(usersResource);
+
+        when(usersResource.delete(keycloakId.toString()))
+                .thenReturn(response);
+
+        when(response.getStatus())
+                .thenReturn(Response.Status.NO_CONTENT.getStatusCode());
+
+
+        //act
+        keycloakIdentityProvider.deleteKeycloakUserRepresentation(keycloakId);
+
+
+        //assert
+        verify(keycloak).realm(KEYCLOAK_REALM);
+        verify(realmResource).users();
+        verify(usersResource).delete(keycloakId.toString());
+        verify(response).getStatus();
+
+    }
+
+
+
+
+
+
+
+
+//    void shouldThrowExceptionWhenKeycloakUserDeletionFails() {}
+//    void shouldPromoteUserToModerator() {}
+//    void shouldDowngradeModeratorToUser() {}
+//    void shouldReturnTrueWhenUserHasRequestedRole() {}
+//    void shouldReturnFalseWhenUserDoesNotHaveRequestedRole() {}
+//    void shouldReturnCorrectBusinessRole() {}
+//    void shouldThrowExceptionWhenBusinessRoleIsMissing() {}
+//    void shouldReturnRolesForMultipleUsers() {}
 }
