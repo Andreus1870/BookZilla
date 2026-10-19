@@ -443,11 +443,30 @@ public class KeycloakIdentityProviderTest {
         assertThat(result).isEqualTo(BusinessRole.MODERATOR);
     }
 
+    @Test
+    void shouldThrowExceptionWhenBusinessRoleIsMissing() {
+        // arrange
+        UUID keycloakId = UUID.randomUUID();
+
+        when(keycloak.realm(KEYCLOAK_REALM)).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.get(keycloakId.toString())).thenReturn(userResource);
+        when(userResource.roles()).thenReturn(roleMappingResource);
+        when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
+        when(roleScopeResource.listAll()).thenReturn(List.of(roleRepresentation));
+        when(roleRepresentation.getName()).thenReturn("");
+
+        //act and assert
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> keycloakIdentityProvider
+                        .getUserRoleByKeycloakId(keycloakId)
+        );
+
+        assertThat(exception.getMessage())
+                .isEqualTo("Business role was not found for user with id: " + keycloakId);
+    }
 
 
-
-
-
-//    void shouldThrowExceptionWhenBusinessRoleIsMissing() {}
 //    void shouldReturnRolesForMultipleUsers() {}
 }
