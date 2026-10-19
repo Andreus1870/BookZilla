@@ -24,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.UUID;
 import java.util.List;
 
@@ -467,6 +468,46 @@ public class KeycloakIdentityProviderTest {
                 .isEqualTo("Business role was not found for user with id: " + keycloakId);
     }
 
+    @Test
+    void shouldReturnRolesForAllUsers() {
+        // arrange
+        UUID userId = UUID.randomUUID();
+        UUID moderatorId = UUID.randomUUID();
+        List<UUID> keycloakIds = List.of(userId, moderatorId);
 
-//    void shouldReturnRolesForMultipleUsers() {}
+        RoleRepresentation userRole = mock(RoleRepresentation.class);
+        RoleRepresentation moderatorRole = mock(RoleRepresentation.class);
+
+        UserResource moderatorUserResource = mock(UserResource.class);
+        RoleMappingResource moderatorRoleMapping = mock(RoleMappingResource.class);
+        RoleScopeResource moderatorRoleScope = mock(RoleScopeResource.class);
+
+        when(keycloak.realm(KEYCLOAK_REALM)).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+
+        when(usersResource.get(userId.toString())).thenReturn(userResource);
+        when(usersResource.get(moderatorId.toString())).thenReturn(moderatorUserResource);
+
+        when(userResource.roles()).thenReturn(roleMappingResource);
+        when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
+        when(roleScopeResource.listAll()).thenReturn(List.of(userRole));
+
+        when(moderatorUserResource.roles()).thenReturn(moderatorRoleMapping);
+        when(moderatorRoleMapping.realmLevel()).thenReturn(moderatorRoleScope);
+        when(moderatorRoleScope.listAll()).thenReturn(List.of(moderatorRole));
+
+        when(userRole.getName()).thenReturn(BusinessRole.USER.name());
+        when(moderatorRole.getName()).thenReturn(BusinessRole.MODERATOR.name());
+
+        // act
+        Map<UUID, BusinessRole> result =
+                keycloakIdentityProvider.getUsersRolesByKeycloakIds(keycloakIds);
+
+        // assert
+        assertThat(result)
+                .containsExactlyInAnyOrderEntriesOf(Map.of(
+                        userId, BusinessRole.USER,
+                        moderatorId, BusinessRole.MODERATOR
+                ));
+    }
 }
