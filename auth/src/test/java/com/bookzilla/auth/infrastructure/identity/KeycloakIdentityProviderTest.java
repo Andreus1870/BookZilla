@@ -1,5 +1,6 @@
 package com.bookzilla.auth.infrastructure.identity;
 
+import com.bookzilla.auth.domain.BusinessRole;
 import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUserCreationException;
 import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUserDeletionException;
 import com.bookzilla.auth.infrastructure.keycloak.identity.KeycloakIdentityProvider;
@@ -319,12 +320,44 @@ public class KeycloakIdentityProviderTest {
         );
     }
 
+    @Test
+    void shouldPromoteUserToModerator() {
+        // arrange
+        UUID keycloakId = UUID.randomUUID();
+
+        RoleResource moderatorRoleResource = mock(RoleResource.class);
+        RoleRepresentation moderatorRoleRepresentation = mock(RoleRepresentation.class);
+
+        when(keycloak.realm(KEYCLOAK_REALM)).thenReturn(realmResource);
+
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.get(keycloakId.toString())).thenReturn(userResource);
+        when(userResource.roles()).thenReturn(roleMappingResource);
+        when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
+
+        when(realmResource.roles()).thenReturn(rolesResource);
+        when(rolesResource.get(BusinessRole.USER.name())).thenReturn(roleResource);
+        when(rolesResource.get(BusinessRole.MODERATOR.name())).thenReturn(moderatorRoleResource);
+
+        when(roleResource.toRepresentation()).thenReturn(roleRepresentation);
+        when(moderatorRoleResource.toRepresentation()).thenReturn(moderatorRoleRepresentation);
+
+        // act
+        keycloakIdentityProvider.promoteToModerator(keycloakId);
+
+        // assert
+        verify(roleScopeResource).remove(List.of(roleRepresentation));
+        verify(roleScopeResource).add(List.of(moderatorRoleRepresentation));
+
+    }
 
 
 
 
 
-//    void shouldPromoteUserToModerator() {}
+
+
+
 //    void shouldDowngradeModeratorToUser() {}
 //    void shouldReturnTrueWhenUserHasRequestedRole() {}
 //    void shouldReturnFalseWhenUserDoesNotHaveRequestedRole() {}
