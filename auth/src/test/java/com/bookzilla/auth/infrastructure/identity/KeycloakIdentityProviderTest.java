@@ -1,6 +1,7 @@
 package com.bookzilla.auth.infrastructure.identity;
 
 import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUserCreationException;
+import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUserDeletionException;
 import com.bookzilla.auth.infrastructure.keycloak.identity.KeycloakIdentityProvider;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
@@ -287,14 +288,42 @@ public class KeycloakIdentityProviderTest {
 
     }
 
+    @Test
+    void shouldThrowExceptionWhenKeycloakUserDeletionFails() {
+        //arrange
+        UUID keycloakId = UUID.randomUUID();
+
+        when(keycloak.realm(KEYCLOAK_REALM))
+                .thenReturn(realmResource);
+
+        when(realmResource.users())
+                .thenReturn(usersResource);
+
+        when(usersResource.delete(keycloakId.toString()))
+                .thenReturn(response);
+
+        when(response.getStatus())
+                .thenReturn(Response.Status.CONFLICT.getStatusCode());
+
+
+        //act and assert
+        KeycloakUserDeletionException result = assertThrows(
+                KeycloakUserDeletionException.class,
+                () -> keycloakIdentityProvider
+                        .deleteKeycloakUserRepresentation(keycloakId)
+        );
+
+        assertThat(result.getMessage()).isEqualTo(
+                "Failed to delete Keycloak user. HTTP status: "
+                        + Response.Status.CONFLICT.getStatusCode()
+        );
+    }
 
 
 
 
 
 
-
-//    void shouldThrowExceptionWhenKeycloakUserDeletionFails() {}
 //    void shouldPromoteUserToModerator() {}
 //    void shouldDowngradeModeratorToUser() {}
 //    void shouldReturnTrueWhenUserHasRequestedRole() {}
