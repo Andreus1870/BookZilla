@@ -43,8 +43,8 @@ public class JpaUserRepositoryAdapter implements UserRepository {
     }
 
     @Override
-    public Optional<User> getUserByKeycloakId(UUID userId){
-        return jpaUserRepository.getUserByKeycloakId(userId)
+    public Optional<User> getUserByKeycloakId(UUID keycloakId){
+        return jpaUserRepository.getUserByKeycloakId(keycloakId)
                 .map(userMapper::toDomain);
     }
 

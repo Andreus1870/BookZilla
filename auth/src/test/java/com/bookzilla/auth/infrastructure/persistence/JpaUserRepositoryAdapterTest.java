@@ -1,18 +1,21 @@
 package com.bookzilla.auth.infrastructure.persistence;
 
 import com.bookzilla.auth.domain.User;
+import com.bookzilla.auth.infrastructure.persistence.entity.UserJpaEntity;
+import com.bookzilla.auth.infrastructure.persistence.mapper.UserMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class JpaUserRepositoryAdapterTest {
@@ -21,48 +24,96 @@ public class JpaUserRepositoryAdapterTest {
     @Mock
     private JpaUserRepository jpaUserRepository;
 
+    @Mock
+    private UserMapper userMapper;
+
     @InjectMocks
     private JpaUserRepositoryAdapter jpaUserRepositoryAdapter;
 
 
     @Test
-    void shouldDelegateSaveToJpaRepository(){
+    void shouldMapSaveAndReturnDomainUser(){
 
         // arrange
+        UUID keycloakId = UUID.randomUUID();
+
         User user = new User(
                 "John",
                 "Doe",
-                "john@example.com",
-                UUID.randomUUID());
+                "jdoe@example.com",
+                keycloakId
+        );
 
-        when(jpaUserRepository.save(user)).thenReturn(user);
+        UUID userId = user.getId();
+
+        UserJpaEntity jpaUser = new UserJpaEntity(
+                userId,
+                keycloakId,
+                "John",
+                "Doe",
+                "jdoe@example.com",
+                null,
+                null,
+                null,
+                user.getRegistrationDate()
+        );
+
+        when(userMapper.toEntity(user)).thenReturn(jpaUser);
+        when(jpaUserRepository.save(jpaUser)).thenReturn(jpaUser);
+        when(userMapper.toDomain(jpaUser)).thenReturn(user);
+
 
         // act
         User result = jpaUserRepositoryAdapter.save(user);
 
         // assert
-        verify(jpaUserRepository).save(user);
+        verify(jpaUserRepository).save(jpaUser);
+        verify(userMapper).toEntity(user);
+        verify(userMapper).toDomain(jpaUser);
         assertThat(result).isSameAs(user);
     }
 
 
     @Test
     void shouldFindUserByKeycloakId() {
+
         // arrange
         UUID keycloakId = UUID.randomUUID();
+
         User user = new User(
                 "John",
                 "Doe",
-                "john@example.com",
-                keycloakId);
+                "jdoe@example.com",
+                keycloakId
+        );
 
-        when(jpaUserRepository.getUserByKeycloakId(keycloakId)).thenReturn(Optional.of(user));
+        UUID userId = user.getId();
+
+        UserJpaEntity jpaUser = new UserJpaEntity(
+                userId,
+                keycloakId,
+                "John",
+                "Doe",
+                "jdoe@example.com",
+                null,
+                null,
+                null,
+                user.getRegistrationDate()
+        );
+
+        Optional<UserJpaEntity> optionalUserJpa = Optional.of(jpaUser);
+
+        when(jpaUserRepository.getUserByKeycloakId(keycloakId)).thenReturn(optionalUserJpa);
+        when(userMapper.toDomain(jpaUser)).thenReturn(user);
+
 
         // act
         Optional<User> result = jpaUserRepositoryAdapter.getUserByKeycloakId(keycloakId);
 
         // assert
         verify(jpaUserRepository).getUserByKeycloakId(keycloakId);
+        verify(userMapper).toDomain(jpaUser);
+
         assertThat(result).containsSame(user);
     }
 
@@ -80,6 +131,7 @@ public class JpaUserRepositoryAdapterTest {
 
         // assert
         verify(jpaUserRepository).getUserByKeycloakId(keycloakId);
+        verifyNoInteractions(userMapper);
         assertThat(result).isEmpty();
 
     }
@@ -98,7 +150,7 @@ public class JpaUserRepositoryAdapterTest {
 
         // assert
         verify(jpaUserRepository).existsByEmail(email);
-        assertThat(result).isSameAs(doesExist);
+        assertThat(result).isEqualTo(doesExist);
     }
 
 
@@ -106,22 +158,44 @@ public class JpaUserRepositoryAdapterTest {
     void shouldFindUserByEmail() {
 
         // arrange
-        String email = "user@example.com";
+        UUID keycloakId = UUID.randomUUID();
+        String email = "jdoe@example.com";
+
         User user = new User(
                 "John",
                 "Doe",
-                "user@example.com",
-                UUID.randomUUID());
+                "jdoe@example.com",
+                keycloakId
+        );
 
-        when(jpaUserRepository.findByEmailIgnoreCase(email)).thenReturn(Optional.of(user));
+        UUID userId = user.getId();
+
+        UserJpaEntity jpaUser = new UserJpaEntity(
+                userId,
+                keycloakId,
+                "John",
+                "Doe",
+                "jdoe@example.com",
+                null,
+                null,
+                null,
+                user.getRegistrationDate()
+        );
+
+        Optional<UserJpaEntity> optionalUserJpa = Optional.of(jpaUser);
+
+        when(jpaUserRepository.findByEmailIgnoreCase(email)).thenReturn(optionalUserJpa);
+        when(userMapper.toDomain(jpaUser)).thenReturn(user);
+
 
         // act
         Optional<User> result = jpaUserRepositoryAdapter.getUserByEmail(email);
 
         // assert
         verify(jpaUserRepository).findByEmailIgnoreCase(email);
-        assertThat(result).isPresent();
-        assertThat(result.get()).isSameAs(user);
+        verify(userMapper).toDomain(jpaUser);
+
+        assertThat(result).containsSame(user);
     }
 
 
@@ -138,7 +212,117 @@ public class JpaUserRepositoryAdapterTest {
 
         // assert
         verify(jpaUserRepository).findByEmailIgnoreCase(email);
+        verifyNoInteractions(userMapper);
         assertThat(result).isEmpty();
 
+    }
+
+    @Test
+    void shouldDeleteUserByEmail() {
+        // arrange
+        String email = "john@example.com";
+
+        // act
+        jpaUserRepositoryAdapter.deleteUserByEmail(email);
+
+        // assert
+        verify(jpaUserRepository).deleteUserByEmail(email);
+
+    }
+
+
+    @Test
+    void shouldReturnAllUsers() {
+        // arrange
+
+        //user1
+        UUID keycloakIdOne = UUID.randomUUID();
+
+        User userOne = new User(
+                "John",
+                "Doe",
+                "jdoe@example.com",
+                keycloakIdOne
+        );
+
+        UUID userOneId = userOne.getId();
+
+        UserJpaEntity jpaUserOne = new UserJpaEntity(
+                userOneId,
+                keycloakIdOne,
+                "John",
+                "Doe",
+                "jdoe@example.com",
+                null,
+                null,
+                null,
+                userOne.getRegistrationDate()
+        );
+
+
+        //user2
+        UUID keycloakIdTwo = UUID.randomUUID();
+
+        User userTwo = new User(
+                "John",
+                "Doe",
+                "jdoe2@example.com",
+                keycloakIdTwo
+        );
+
+        UUID userTwoId = userTwo.getId();
+
+        UserJpaEntity jpaUserTwo = new UserJpaEntity(
+                userTwoId,
+                keycloakIdTwo,
+                "John",
+                "Doe",
+                "jdoe2@example.com",
+                null,
+                null,
+                null,
+                userTwo.getRegistrationDate()
+        );
+
+        List<UserJpaEntity> userJpaList = List.of(jpaUserOne, jpaUserTwo);
+
+        when(jpaUserRepository.findAll()).thenReturn(userJpaList);
+        when(userMapper.toDomain(jpaUserOne)).thenReturn(userOne);
+        when(userMapper.toDomain(jpaUserTwo)).thenReturn(userTwo);
+
+
+        //act
+        List<User> result = jpaUserRepositoryAdapter.getAllUsers();
+
+
+        //assert
+        verify(jpaUserRepository).findAll();
+        verify(userMapper).toDomain(jpaUserOne);
+        verify(userMapper).toDomain(jpaUserTwo);
+
+        assertThat(result).containsExactly(userOne, userTwo);
+
+
+    }
+
+
+    @Test
+    void shouldReturnEmptyListWhenNoUsersExist() {
+        // arrange
+
+        List<UserJpaEntity> userJpaList = new ArrayList<>();
+
+        when(jpaUserRepository.findAll()).thenReturn(userJpaList);
+
+
+        //act
+        List<User> result = jpaUserRepositoryAdapter.getAllUsers();
+
+
+        //assert
+        verify(jpaUserRepository).findAll();
+        verifyNoInteractions(userMapper);
+
+        assertThat(result).containsExactly();
     }
 }

@@ -1,6 +1,8 @@
 package com.bookzilla.auth.infrastructure.identity;
 
+import com.bookzilla.auth.domain.BusinessRole;
 import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUserCreationException;
+import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUserDeletionException;
 import com.bookzilla.auth.infrastructure.keycloak.identity.KeycloakIdentityProvider;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.UUID;
 import java.util.List;
 
@@ -253,5 +256,258 @@ public class KeycloakIdentityProviderTest {
 
         assertThat(exception.getMessage())
                 .isEqualTo("Keycloak did not return an ID for the created user");
+    }
+
+
+
+    @Test
+    void shouldDeleteKeycloakUserSuccessfully() {
+        //arrange
+        UUID keycloakId = UUID.randomUUID();
+
+        when(keycloak.realm(KEYCLOAK_REALM))
+                .thenReturn(realmResource);
+
+        when(realmResource.users())
+                .thenReturn(usersResource);
+
+        when(usersResource.delete(keycloakId.toString()))
+                .thenReturn(response);
+
+        when(response.getStatus())
+                .thenReturn(Response.Status.NO_CONTENT.getStatusCode());
+
+
+        //act
+        keycloakIdentityProvider.deleteKeycloakUserRepresentation(keycloakId);
+
+
+        //assert
+        verify(keycloak).realm(KEYCLOAK_REALM);
+        verify(realmResource).users();
+        verify(usersResource).delete(keycloakId.toString());
+        verify(response).getStatus();
+
+    }
+
+    @Test
+    void shouldThrowExceptionWhenKeycloakUserDeletionFails() {
+        //arrange
+        UUID keycloakId = UUID.randomUUID();
+
+        when(keycloak.realm(KEYCLOAK_REALM))
+                .thenReturn(realmResource);
+
+        when(realmResource.users())
+                .thenReturn(usersResource);
+
+        when(usersResource.delete(keycloakId.toString()))
+                .thenReturn(response);
+
+        when(response.getStatus())
+                .thenReturn(Response.Status.CONFLICT.getStatusCode());
+
+
+        //act and assert
+        KeycloakUserDeletionException result = assertThrows(
+                KeycloakUserDeletionException.class,
+                () -> keycloakIdentityProvider
+                        .deleteKeycloakUserRepresentation(keycloakId)
+        );
+
+        assertThat(result.getMessage()).isEqualTo(
+                "Failed to delete Keycloak user. HTTP status: "
+                        + Response.Status.CONFLICT.getStatusCode()
+        );
+    }
+
+    @Test
+    void shouldPromoteUserToModerator() {
+        // arrange
+        UUID keycloakId = UUID.randomUUID();
+
+        RoleResource moderatorRoleResource = mock(RoleResource.class);
+        RoleRepresentation moderatorRoleRepresentation = mock(RoleRepresentation.class);
+
+        when(keycloak.realm(KEYCLOAK_REALM)).thenReturn(realmResource);
+
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.get(keycloakId.toString())).thenReturn(userResource);
+        when(userResource.roles()).thenReturn(roleMappingResource);
+        when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
+
+        when(realmResource.roles()).thenReturn(rolesResource);
+        when(rolesResource.get(BusinessRole.USER.name())).thenReturn(roleResource);
+        when(rolesResource.get(BusinessRole.MODERATOR.name())).thenReturn(moderatorRoleResource);
+
+        when(roleResource.toRepresentation()).thenReturn(roleRepresentation);
+        when(moderatorRoleResource.toRepresentation()).thenReturn(moderatorRoleRepresentation);
+
+        // act
+        keycloakIdentityProvider.promoteToModerator(keycloakId);
+
+        // assert
+        verify(roleScopeResource).remove(List.of(roleRepresentation));
+        verify(roleScopeResource).add(List.of(moderatorRoleRepresentation));
+
+    }
+
+    @Test
+    void shouldDowngradeModeratorToUser() {
+        // arrange
+        UUID keycloakId = UUID.randomUUID();
+
+        RoleResource userRoleResource = mock(RoleResource.class);
+        RoleRepresentation userRoleRepresentation = mock(RoleRepresentation.class);
+
+        when(keycloak.realm(KEYCLOAK_REALM)).thenReturn(realmResource);
+
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.get(keycloakId.toString())).thenReturn(userResource);
+        when(userResource.roles()).thenReturn(roleMappingResource);
+        when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
+
+        when(realmResource.roles()).thenReturn(rolesResource);
+        when(rolesResource.get(BusinessRole.USER.name())).thenReturn(userRoleResource);
+        when(rolesResource.get(BusinessRole.MODERATOR.name())).thenReturn(roleResource);
+
+        when(roleResource.toRepresentation()).thenReturn(roleRepresentation);
+        when(userRoleResource.toRepresentation()).thenReturn(userRoleRepresentation);
+
+        // act
+        keycloakIdentityProvider.downgradeModerator(keycloakId);
+
+        // assert
+        verify(roleScopeResource).remove(List.of(roleRepresentation));
+        verify(roleScopeResource).add(List.of(userRoleRepresentation));
+    }
+
+    @Test
+    void shouldReturnTrueWhenUserHasRequestedRole() {
+        // arrange
+        UUID keycloakId = UUID.randomUUID();
+
+        when(keycloak.realm(KEYCLOAK_REALM)).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.get(keycloakId.toString())).thenReturn(userResource);
+        when(userResource.roles()).thenReturn(roleMappingResource);
+        when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
+        when(roleScopeResource.listAll()).thenReturn(List.of(roleRepresentation));
+        when(roleRepresentation.getName()).thenReturn(BusinessRole.USER.name());
+
+        // act
+        boolean result = keycloakIdentityProvider.hasUserRole(keycloakId);
+
+        // assert
+        assertThat(result).isTrue();
+    }
+
+
+    @Test
+    void shouldReturnFalseWhenUserDoesNotHaveRequestedRole() {
+        // arrange
+        UUID keycloakId = UUID.randomUUID();
+
+        when(keycloak.realm(KEYCLOAK_REALM)).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.get(keycloakId.toString())).thenReturn(userResource);
+        when(userResource.roles()).thenReturn(roleMappingResource);
+        when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
+        when(roleScopeResource.listAll()).thenReturn(List.of(roleRepresentation));
+        when(roleRepresentation.getName()).thenReturn(BusinessRole.MODERATOR.name());
+
+        // act
+        boolean result = keycloakIdentityProvider.hasUserRole(keycloakId);
+
+        // assert
+        assertThat(result).isFalse();
+    }
+
+
+    @Test
+    void shouldReturnCorrectBusinessRole() {
+        // arrange
+        UUID keycloakId = UUID.randomUUID();
+
+        when(keycloak.realm(KEYCLOAK_REALM)).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.get(keycloakId.toString())).thenReturn(userResource);
+        when(userResource.roles()).thenReturn(roleMappingResource);
+        when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
+        when(roleScopeResource.listAll()).thenReturn(List.of(roleRepresentation));
+        when(roleRepresentation.getName()).thenReturn(BusinessRole.MODERATOR.name());
+
+        // act
+        BusinessRole result = keycloakIdentityProvider.getUserRoleByKeycloakId(keycloakId);
+
+        // assert
+        assertThat(result).isEqualTo(BusinessRole.MODERATOR);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenBusinessRoleIsMissing() {
+        // arrange
+        UUID keycloakId = UUID.randomUUID();
+
+        when(keycloak.realm(KEYCLOAK_REALM)).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.get(keycloakId.toString())).thenReturn(userResource);
+        when(userResource.roles()).thenReturn(roleMappingResource);
+        when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
+        when(roleScopeResource.listAll()).thenReturn(List.of(roleRepresentation));
+        when(roleRepresentation.getName()).thenReturn("");
+
+        //act and assert
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> keycloakIdentityProvider
+                        .getUserRoleByKeycloakId(keycloakId)
+        );
+
+        assertThat(exception.getMessage())
+                .isEqualTo("Business role was not found for user with id: " + keycloakId);
+    }
+
+    @Test
+    void shouldReturnRolesForAllUsers() {
+        // arrange
+        UUID userId = UUID.randomUUID();
+        UUID moderatorId = UUID.randomUUID();
+        List<UUID> keycloakIds = List.of(userId, moderatorId);
+
+        RoleRepresentation userRole = mock(RoleRepresentation.class);
+        RoleRepresentation moderatorRole = mock(RoleRepresentation.class);
+
+        UserResource moderatorUserResource = mock(UserResource.class);
+        RoleMappingResource moderatorRoleMapping = mock(RoleMappingResource.class);
+        RoleScopeResource moderatorRoleScope = mock(RoleScopeResource.class);
+
+        when(keycloak.realm(KEYCLOAK_REALM)).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+
+        when(usersResource.get(userId.toString())).thenReturn(userResource);
+        when(usersResource.get(moderatorId.toString())).thenReturn(moderatorUserResource);
+
+        when(userResource.roles()).thenReturn(roleMappingResource);
+        when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
+        when(roleScopeResource.listAll()).thenReturn(List.of(userRole));
+
+        when(moderatorUserResource.roles()).thenReturn(moderatorRoleMapping);
+        when(moderatorRoleMapping.realmLevel()).thenReturn(moderatorRoleScope);
+        when(moderatorRoleScope.listAll()).thenReturn(List.of(moderatorRole));
+
+        when(userRole.getName()).thenReturn(BusinessRole.USER.name());
+        when(moderatorRole.getName()).thenReturn(BusinessRole.MODERATOR.name());
+
+        // act
+        Map<UUID, BusinessRole> result =
+                keycloakIdentityProvider.getUsersRolesByKeycloakIds(keycloakIds);
+
+        // assert
+        assertThat(result)
+                .containsExactlyInAnyOrderEntriesOf(Map.of(
+                        userId, BusinessRole.USER,
+                        moderatorId, BusinessRole.MODERATOR
+                ));
     }
 }
