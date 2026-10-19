@@ -351,6 +351,35 @@ public class KeycloakIdentityProviderTest {
 
     }
 
+    @Test
+    void shouldDowngradeModeratorToUser() {
+        // arrange
+        UUID keycloakId = UUID.randomUUID();
+
+        RoleResource userRoleResource = mock(RoleResource.class);
+        RoleRepresentation userRoleRepresentation = mock(RoleRepresentation.class);
+
+        when(keycloak.realm(KEYCLOAK_REALM)).thenReturn(realmResource);
+
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.get(keycloakId.toString())).thenReturn(userResource);
+        when(userResource.roles()).thenReturn(roleMappingResource);
+        when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
+
+        when(realmResource.roles()).thenReturn(rolesResource);
+        when(rolesResource.get(BusinessRole.USER.name())).thenReturn(userRoleResource);
+        when(rolesResource.get(BusinessRole.MODERATOR.name())).thenReturn(roleResource);
+
+        when(roleResource.toRepresentation()).thenReturn(roleRepresentation);
+        when(userRoleResource.toRepresentation()).thenReturn(userRoleRepresentation);
+
+        // act
+        keycloakIdentityProvider.downgradeModerator(keycloakId);
+
+        // assert
+        verify(roleScopeResource).remove(List.of(roleRepresentation));
+        verify(roleScopeResource).add(List.of(userRoleRepresentation));
+    }
 
 
 
@@ -358,7 +387,9 @@ public class KeycloakIdentityProviderTest {
 
 
 
-//    void shouldDowngradeModeratorToUser() {}
+
+
+
 //    void shouldReturnTrueWhenUserHasRequestedRole() {}
 //    void shouldReturnFalseWhenUserDoesNotHaveRequestedRole() {}
 //    void shouldReturnCorrectBusinessRole() {}
