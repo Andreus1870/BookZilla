@@ -402,6 +402,26 @@ public class KeycloakIdentityProviderTest {
     }
 
 
+    @Test
+    void shouldReturnFalseWhenUserDoesNotHaveRequestedRole() {
+        // arrange
+        UUID keycloakId = UUID.randomUUID();
+
+        when(keycloak.realm(KEYCLOAK_REALM)).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.get(keycloakId.toString())).thenReturn(userResource);
+        when(userResource.roles()).thenReturn(roleMappingResource);
+        when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
+        when(roleScopeResource.listAll()).thenReturn(List.of(roleRepresentation));
+        when(roleRepresentation.getName()).thenReturn(BusinessRole.MODERATOR.name());
+
+        // act
+        boolean result = keycloakIdentityProvider.hasUserRole(keycloakId);
+
+        // assert
+        assertThat(result).isFalse();
+    }
+
 
 
 //    void shouldReturnCorrectBusinessRole() {}
