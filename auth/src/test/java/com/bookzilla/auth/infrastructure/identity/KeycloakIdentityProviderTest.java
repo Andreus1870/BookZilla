@@ -381,17 +381,29 @@ public class KeycloakIdentityProviderTest {
         verify(roleScopeResource).add(List.of(userRoleRepresentation));
     }
 
+    @Test
+    void shouldReturnTrueWhenUserHasRequestedRole() {
+        // arrange
+        UUID keycloakId = UUID.randomUUID();
+
+        when(keycloak.realm(KEYCLOAK_REALM)).thenReturn(realmResource);
+        when(realmResource.users()).thenReturn(usersResource);
+        when(usersResource.get(keycloakId.toString())).thenReturn(userResource);
+        when(userResource.roles()).thenReturn(roleMappingResource);
+        when(roleMappingResource.realmLevel()).thenReturn(roleScopeResource);
+        when(roleScopeResource.listAll()).thenReturn(List.of(roleRepresentation));
+        when(roleRepresentation.getName()).thenReturn(BusinessRole.USER.name());
+
+        // act
+        boolean result = keycloakIdentityProvider.hasUserRole(keycloakId);
+
+        // assert
+        assertThat(result).isTrue();
+    }
 
 
 
 
-
-
-
-
-
-//    void shouldReturnTrueWhenUserHasRequestedRole() {}
-//    void shouldReturnFalseWhenUserDoesNotHaveRequestedRole() {}
 //    void shouldReturnCorrectBusinessRole() {}
 //    void shouldThrowExceptionWhenBusinessRoleIsMissing() {}
 //    void shouldReturnRolesForMultipleUsers() {}
