@@ -8,6 +8,7 @@ import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.BusinessRole;
 import com.bookzilla.auth.domain.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,27 +33,24 @@ public class UserRoleServiceTest {
     @InjectMocks
     UserRoleService userRoleService;
 
+
+    private final String email = "john@example.com";
+    private final UUID keycloakId = UUID.randomUUID();
+
+    @BeforeEach
+    void setUp() {
+        String firstName = "John";
+        String lastName = "Doe";
+        User user = new User(firstName, lastName, email, keycloakId);
+        when(userRepository.getUserByEmail(email)).thenReturn(Optional.of(user));
+    }
+
     @Test
     void shouldSuccessfullyDowngradeModerator() {
 
         // arrange
-        String firstName = "John";
-        String lastName = "Doe";
-        String email = "john@example.com";
-        UUID keycloakId = UUID.randomUUID();
-
-        Optional<User> optionalUser = Optional.of(
-                new User(
-                    firstName,
-                    lastName,
-                    email,
-                    keycloakId
-                )
-        );
-
-        when(userRepository.getUserByEmail(email)).thenReturn(optionalUser);
-
-        when(identityProvider.getUserRoleByKeycloakId(keycloakId)).thenReturn(BusinessRole.MODERATOR);
+        when(identityProvider.getUserRoleByKeycloakId(keycloakId))
+                .thenReturn(BusinessRole.MODERATOR);
 
         // act and assert
         userRoleService.downgradeModerator(email);
@@ -65,23 +63,8 @@ public class UserRoleServiceTest {
     void shouldThrowExceptionWhenTryToDowngradeUser() {
 
         // arrange
-        String firstName = "John";
-        String lastName = "Doe";
-        String email = "john@example.com";
-        UUID keycloakId = UUID.randomUUID();
-
-        Optional<User> optionalUser = Optional.of(
-                new User(
-                        firstName,
-                        lastName,
-                        email,
-                        keycloakId
-                )
-        );
-
-        when(userRepository.getUserByEmail(email)).thenReturn(optionalUser);
-
-        when(identityProvider.getUserRoleByKeycloakId(keycloakId)).thenReturn(BusinessRole.USER);
+        when(identityProvider.getUserRoleByKeycloakId(keycloakId))
+                .thenReturn(BusinessRole.USER);
 
         // act and assert
         assertThrows(
@@ -96,23 +79,8 @@ public class UserRoleServiceTest {
     void shouldThrowExceptionWhenTryToDowngradeAdmin() {
 
         // arrange
-        String firstName = "John";
-        String lastName = "Doe";
-        String email = "john@example.com";
-        UUID keycloakId = UUID.randomUUID();
-
-        Optional<User> optionalUser = Optional.of(
-                new User(
-                        firstName,
-                        lastName,
-                        email,
-                        keycloakId
-                )
-        );
-
-        when(userRepository.getUserByEmail(email)).thenReturn(optionalUser);
-
-        when(identityProvider.getUserRoleByKeycloakId(keycloakId)).thenReturn(BusinessRole.ADMIN);
+        when(identityProvider.getUserRoleByKeycloakId(keycloakId))
+                .thenReturn(BusinessRole.ADMIN);
 
         // act and assert
         assertThrows(
@@ -127,23 +95,8 @@ public class UserRoleServiceTest {
     void shouldSuccessfullyPromoteUserToModerator() {
 
         // arrange
-        String firstName = "John";
-        String lastName = "Doe";
-        String email = "john@example.com";
-        UUID keycloakId = UUID.randomUUID();
-
-        Optional<User> optionalUser = Optional.of(
-                new User(
-                        firstName,
-                        lastName,
-                        email,
-                        keycloakId
-                )
-        );
-
-        when(userRepository.getUserByEmail(email)).thenReturn(optionalUser);
-
-        when(identityProvider.getUserRoleByKeycloakId(keycloakId)).thenReturn(BusinessRole.USER);
+        when(identityProvider.getUserRoleByKeycloakId(keycloakId))
+                .thenReturn(BusinessRole.USER);
 
         // act and assert
         userRoleService.promoteToModerator(email);
@@ -156,23 +109,8 @@ public class UserRoleServiceTest {
     void shouldThrowExceptionWhenTryToPromoteModerator() {
 
         // arrange
-        String firstName = "John";
-        String lastName = "Doe";
-        String email = "john@example.com";
-        UUID keycloakId = UUID.randomUUID();
-
-        Optional<User> optionalUser = Optional.of(
-                new User(
-                        firstName,
-                        lastName,
-                        email,
-                        keycloakId
-                )
-        );
-
-        when(userRepository.getUserByEmail(email)).thenReturn(optionalUser);
-
-        when(identityProvider.getUserRoleByKeycloakId(keycloakId)).thenReturn(BusinessRole.MODERATOR);
+        when(identityProvider.getUserRoleByKeycloakId(keycloakId))
+                .thenReturn(BusinessRole.MODERATOR);
 
         // act and assert
         assertThrows(
@@ -187,23 +125,8 @@ public class UserRoleServiceTest {
     void shouldThrowExceptionWhenTryToPromoteAdmin() {
 
         // arrange
-        String firstName = "John";
-        String lastName = "Doe";
-        String email = "john@example.com";
-        UUID keycloakId = UUID.randomUUID();
-
-        Optional<User> optionalUser = Optional.of(
-                new User(
-                        firstName,
-                        lastName,
-                        email,
-                        keycloakId
-                )
-        );
-
-        when(userRepository.getUserByEmail(email)).thenReturn(optionalUser);
-
-        when(identityProvider.getUserRoleByKeycloakId(keycloakId)).thenReturn(BusinessRole.ADMIN);
+        when(identityProvider.getUserRoleByKeycloakId(keycloakId))
+                .thenReturn(BusinessRole.ADMIN);
 
         // act and assert
         assertThrows(

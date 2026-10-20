@@ -14,6 +14,7 @@ public class UserRoleService {
     private final IdentityProvider identityProvider;
     private final UserRepository userRepository;
 
+
     public UserRoleService(IdentityProvider identityProvider, UserRepository userRepository) {
         this.identityProvider = identityProvider;
         this.userRepository = userRepository;
