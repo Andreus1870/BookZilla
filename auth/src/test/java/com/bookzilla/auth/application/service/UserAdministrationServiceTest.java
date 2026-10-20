@@ -20,8 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -181,4 +180,20 @@ public class UserAdministrationServiceTest {
         assertEquals(secondUser.getRegistrationDate(), result.get(1).registrationDate());
     }
 
+    @Test
+    void shouldReturnEmptyListWhenNoUsersExist() {
+        // arrange
+        when(userRepository.getAllUsers()).thenReturn(List.of());
+        when(identityProvider.getUsersRolesByKeycloakIds(List.of()))
+                .thenReturn(Map.of());
+
+        // act
+        List<UserShortInfo> result = userAdministrationService.getAllUsers();
+
+        // assert
+        assertTrue(result.isEmpty());
+
+        verify(userRepository).getAllUsers();
+        verify(identityProvider).getUsersRolesByKeycloakIds(List.of());
+    }
 }
