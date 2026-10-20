@@ -1,4 +1,4 @@
-package com.bookzilla.auth.infrastructure.identity;
+package com.bookzilla.auth.infrastructure.keycloak.identity;
 
 import com.bookzilla.auth.domain.BusinessRole;
 import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUserCreationException;
