@@ -1,5 +1,6 @@
 package com.bookzilla.auth.application.service;
 
+import com.bookzilla.auth.application.exception.CannotDowngradeAdminException;
 import com.bookzilla.auth.application.exception.CannotDowngradeUserException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
@@ -83,6 +84,37 @@ public class UserRoleServiceTest {
         // act and assert
         assertThrows(
                 CannotDowngradeUserException.class,
+                () -> userRoleService.downgradeModerator(email)
+        );
+
+        verify(identityProvider, never()).downgradeModerator(keycloakId);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenTryToDowngradeAdmin() {
+
+        // arrange
+        String firstName = "John";
+        String lastName = "Doe";
+        String email = "john@example.com";
+        UUID keycloakId = UUID.randomUUID();
+
+        Optional<User> optionalUser = Optional.of(
+                new User(
+                        firstName,
+                        lastName,
+                        email,
+                        keycloakId
+                )
+        );
+
+        when(userRepository.getUserByEmail(email)).thenReturn(optionalUser);
+
+        when(identityProvider.getUserRoleByKeycloakId(keycloakId)).thenReturn(BusinessRole.ADMIN);
+
+        // act and assert
+        assertThrows(
+                CannotDowngradeAdminException.class,
                 () -> userRoleService.downgradeModerator(email)
         );
 
