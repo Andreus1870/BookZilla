@@ -1,5 +1,6 @@
 package com.bookzilla.auth.application.service;
 
+import com.bookzilla.auth.application.exception.UserNotFoundException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.User;
@@ -14,6 +15,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -62,6 +64,24 @@ public class UserAdministrationServiceTest {
         verify(applicationEventPublisher).publishEvent(
                 new DeleteUserRepresentation(user.getId())
         );
+
+    }
+
+    @Test
+    void shouldThrowExceptionWhenUserIsNotFound() {
+
+        // arrange
+        String email = "john@example.com";
+
+        when(userRepository.getUserByEmail(email)).thenReturn(Optional.empty());
+
+        // act and assert
+        assertThrows(
+                UserNotFoundException.class,
+                () -> userAdministrationService.deleteUser(email)
+        );
+
+        verify(userRepository).getUserByEmail(email);
 
     }
 
