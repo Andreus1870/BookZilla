@@ -1,5 +1,6 @@
 package com.bookzilla.auth.application.service;
 
+import com.bookzilla.auth.application.exception.CannotDeleteModeratorException;
 import com.bookzilla.auth.application.exception.UserNotFoundException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
@@ -16,8 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserAdministrationServiceTest {
@@ -82,7 +82,42 @@ public class UserAdministrationServiceTest {
         );
 
         verify(userRepository).getUserByEmail(email);
+        verify(identityProvider, never()).deleteKeycloakUserRepresentation(any());
+        verify(userRepository, never()).deleteUserByEmail(anyString());
+        verifyNoInteractions(applicationEventPublisher);
 
+    }
+
+    @Test
+    void shouldThrowExceptionWhenTryToDeleteModerator() {
+
+        // arrange
+        String firstName = "John";
+        String lastName = "Doe";
+        String email = "john@example.com";
+        UUID keycloakId = UUID.randomUUID();
+
+        User user = new User(
+                firstName,
+                lastName,
+                email,
+                keycloakId
+        );
+
+        when(userRepository.getUserByEmail(email)).thenReturn(Optional.of(user));
+        when(identityProvider.hasUserRole(keycloakId)).thenReturn(false);
+
+        // act and assert
+        assertThrows(
+                CannotDeleteModeratorException.class,
+                () -> userAdministrationService.deleteUser(email)
+        );
+
+        verify(userRepository).getUserByEmail(email);
+        verify(identityProvider).hasUserRole(keycloakId);
+        verify(identityProvider, never()).deleteKeycloakUserRepresentation(any());
+        verify(userRepository, never()).deleteUserByEmail(anyString());
+        verifyNoInteractions(applicationEventPublisher);
     }
 
 }
