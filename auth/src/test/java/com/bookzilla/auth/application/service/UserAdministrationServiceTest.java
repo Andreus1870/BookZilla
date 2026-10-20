@@ -1,9 +1,11 @@
 package com.bookzilla.auth.application.service;
 
+import com.bookzilla.auth.application.dto.UserShortInfo;
 import com.bookzilla.auth.application.exception.CannotDeleteModeratorException;
 import com.bookzilla.auth.application.exception.UserNotFoundException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
+import com.bookzilla.auth.domain.BusinessRole;
 import com.bookzilla.auth.domain.User;
 import com.bookzilla.contracts.event.DeleteUserRepresentation;
 import org.junit.jupiter.api.Test;
@@ -13,9 +15,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -118,6 +123,62 @@ public class UserAdministrationServiceTest {
         verify(identityProvider, never()).deleteKeycloakUserRepresentation(any());
         verify(userRepository, never()).deleteUserByEmail(anyString());
         verifyNoInteractions(applicationEventPublisher);
+    }
+
+    @Test
+    void shouldGetAllUsersSuccessfully() {
+        // arrange
+        UUID firstKeycloakId = UUID.randomUUID();
+        UUID secondKeycloakId = UUID.randomUUID();
+
+        User firstUser = new User(
+                "John",
+                "Doe",
+                "john@example.com",
+                firstKeycloakId
+        );
+        User secondUser = new User(
+                "Jane",
+                "Smith",
+                "jane@example.com",
+                secondKeycloakId
+        );
+
+        List<User> users = List.of(firstUser, secondUser);
+
+        Map<UUID, BusinessRole> rolesByKeycloakIds = Map.of(
+                firstKeycloakId, BusinessRole.USER,
+                secondKeycloakId, BusinessRole.MODERATOR
+        );
+
+        when(userRepository.getAllUsers()).thenReturn(users);
+        when(identityProvider.getUsersRolesByKeycloakIds(
+                List.of(firstKeycloakId, secondKeycloakId)
+        )).thenReturn(rolesByKeycloakIds);
+
+        // act
+        List<UserShortInfo> result = userAdministrationService.getAllUsers();
+
+        // assert
+        assertEquals(2, result.size());
+
+        assertEquals("john@example.com", result.get(0).email());
+        assertEquals("John", result.get(0).firstName());
+        assertEquals("Doe", result.get(0).lastName());
+        assertEquals(BusinessRole.USER, result.get(0).role());
+
+        assertEquals("jane@example.com", result.get(1).email());
+        assertEquals("Jane", result.get(1).firstName());
+        assertEquals("Smith", result.get(1).lastName());
+        assertEquals(BusinessRole.MODERATOR, result.get(1).role());
+
+        verify(userRepository).getAllUsers();
+        verify(identityProvider).getUsersRolesByKeycloakIds(
+                List.of(firstKeycloakId, secondKeycloakId)
+        );
+
+        assertEquals(firstUser.getRegistrationDate(), result.get(0).registrationDate());
+        assertEquals(secondUser.getRegistrationDate(), result.get(1).registrationDate());
     }
 
 }
