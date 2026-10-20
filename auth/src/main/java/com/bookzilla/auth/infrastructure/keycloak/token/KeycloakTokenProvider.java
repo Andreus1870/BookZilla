@@ -6,8 +6,10 @@ import com.bookzilla.auth.infrastructure.keycloak.exception.InvalidRefreshTokenE
 import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUnavailableException;
 import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUnexpectedResponseException;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -27,14 +29,35 @@ public class KeycloakTokenProvider implements TokenProvider {
     private final String tokenUrl;
     private final String clientId;
 
+    @Autowired
     public KeycloakTokenProvider(
             RestClient.Builder restClientBuilder,
             @Value("${keycloak.oauth.token-url}") String tokenUrl,
             @Value("${keycloak.oauth.client-id}") String clientId
     ) {
+        this(
+                restClientBuilder,
+                tokenUrl,
+                clientId,
+                createRequestFactory()
+        );
+    }
+
+    KeycloakTokenProvider(
+            RestClient.Builder restClientBuilder,
+            String tokenUrl,
+            String clientId,
+            ClientHttpRequestFactory requestFactory
+    ) {
         this.tokenUrl = tokenUrl;
         this.clientId = clientId;
 
+        this.restClient = restClientBuilder
+                .requestFactory(requestFactory)
+                .build();
+    }
+
+    private static ClientHttpRequestFactory createRequestFactory() {
         HttpClient httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(5))
                 .build();
@@ -44,10 +67,9 @@ public class KeycloakTokenProvider implements TokenProvider {
 
         requestFactory.setReadTimeout(Duration.ofSeconds(5));
 
-        this.restClient = restClientBuilder
-                .requestFactory(requestFactory)
-                .build();
+        return requestFactory;
     }
+
 
     @Override
     public RefreshTokenResponse refreshToken(String refreshToken) {
