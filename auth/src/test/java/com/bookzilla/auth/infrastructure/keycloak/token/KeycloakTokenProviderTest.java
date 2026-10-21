@@ -2,8 +2,10 @@ package com.bookzilla.auth.infrastructure.keycloak.token;
 
 import com.bookzilla.auth.application.dto.RefreshTokenResponse;
 import com.bookzilla.auth.infrastructure.keycloak.exception.InvalidRefreshTokenException;
+import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUnexpectedResponseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
@@ -14,8 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
 public class KeycloakTokenProviderTest {
 
@@ -103,4 +104,20 @@ public class KeycloakTokenProviderTest {
         assertThatThrownBy(() -> tokenProvider.refreshToken(REFRESH_TOKEN))
                 .isInstanceOf(InvalidRefreshTokenException.class);
     }
+
+    @Test
+    void shouldThrowKeycloakUnexpectedResponseExceptionWhenUnexpectedClientErrorOccurs() {
+        // arrange
+        server.expect(requestTo(TOKEN_URL))
+                .andExpect(method(POST))
+                .andRespond(withStatus(HttpStatus.FORBIDDEN));
+
+        // act and assert
+        assertThatThrownBy(() -> tokenProvider.refreshToken(REFRESH_TOKEN))
+                .isInstanceOf(KeycloakUnexpectedResponseException.class)
+                .hasMessage("Keycloak token endpoint returned an unexpected client error");
+
+        server.verify();
+    }
+
 }
