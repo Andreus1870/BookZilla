@@ -50,7 +50,8 @@ public class UserJpaEntity {
                          String phone,
                          String country,
                          String city,
-                         Instant registrationDate) {
+                         Instant registrationDate,
+                         boolean isDeleted) {
 
         this.id = id;
         this.keycloakId = keycloakId;
@@ -61,7 +62,7 @@ public class UserJpaEntity {
         this.country = country;
         this.city = city;
         this.registrationDate = registrationDate;
-        this.isDeleted = false;
+        this.isDeleted = isDeleted;
     }
 
     public void setFirstName(String firstName) {

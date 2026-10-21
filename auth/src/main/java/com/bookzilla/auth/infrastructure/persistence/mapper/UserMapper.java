@@ -17,7 +17,8 @@ public class UserMapper {
                 user.getPhone(),
                 user.getCountry(),
                 user.getCity(),
-                user.getRegistrationDate()
+                user.getRegistrationDate(),
+                user.isDeleted()
         );
     }
 
@@ -31,7 +32,8 @@ public class UserMapper {
                 userJpaEntity.getPhone(),
                 userJpaEntity.getCountry(),
                 userJpaEntity.getCity(),
-                userJpaEntity.getRegistrationDate()
+                userJpaEntity.getRegistrationDate(),
+                userJpaEntity.isDeleted()
         );
     }
 
