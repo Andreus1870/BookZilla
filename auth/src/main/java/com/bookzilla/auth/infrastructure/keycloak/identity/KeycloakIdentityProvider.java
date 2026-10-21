@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class KeycloakIdentityProvider implements IdentityProvider {
@@ -103,16 +104,12 @@ public class KeycloakIdentityProvider implements IdentityProvider {
     @Override
     public Map<UUID, BusinessRole> getUsersRolesByKeycloakIds(List<UUID> keycloakIds) {
 
-        Map<UUID, BusinessRole> rolesByKeycloakIds = new HashMap<>();
-
-        keycloakIds.forEach(id -> {
-            BusinessRole role = getUserRoleByKeycloakId(id);
-
-            rolesByKeycloakIds.put(id, role);
-        });
-
-        return rolesByKeycloakIds;
+        return keycloakIds.stream()
+                .collect(
+                        Collectors.toMap(id -> id, this::getUserRoleByKeycloakId)
+                );
     }
+
 
     @Override
     public BusinessRole getUserRoleByKeycloakId(UUID keycloakId) {
