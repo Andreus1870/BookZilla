@@ -6,15 +6,18 @@ import com.bookzilla.auth.application.exception.UserNotFoundException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.User;
+import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUserDeletionException;
 import com.bookzilla.contracts.event.UserRegistered;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.*;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.UUID;
 
@@ -25,6 +28,9 @@ public class UserService {
     private final ApplicationEventPublisher applicationEventPublisher;
     private final IdentityProvider identityProvider;
     private final TransactionTemplate transactionTemplate;
+
+    private static final Logger log =
+            LoggerFactory.getLogger(UserService.class);
 
 
     public UserService(UserRepository userRepository,
@@ -43,12 +49,19 @@ public class UserService {
                          String password) {
 
         if (userRepository.existsByEmail(email)) {
-            throw new EmailAlreadyRegisteredException("Email is already registered!");
+
+            log.warn("User registration rejected: email is already registered");
+
+            throw new EmailAlreadyRegisteredException(
+                    "Email is already registered!"
+            );
         }
 
         UUID keycloakUserId = identityProvider.createIdentity(
                 firstName, lastName, email, password
         );
+
+        log.info("Keycloak identity created: keycloakUserId={}", keycloakUserId);
 
 
         transactionTemplate.executeWithoutResult(status -> {
@@ -57,10 +70,33 @@ public class UserService {
                     new TransactionSynchronization() {
                         @Override
                         public void afterCompletion(int status) {
+
                             if (status == STATUS_ROLLED_BACK) {
-                                identityProvider.deleteKeycloakUserRepresentation(
-                                        keycloakUserId
-                                );
+
+                                log.warn(
+                                        "User database transaction rolled back." +
+                                                " Starting Keycloak identity cleanup: keycloakUserId={}",
+                                        keycloakUserId);
+
+                                try {
+
+                                    identityProvider.deleteKeycloakUserRepresentation(
+                                            keycloakUserId
+                                    );
+
+                                    log.info("Compensation was executed successfully. " +
+                                                    "Keycloak identity was deleted: keycloakUserId={}",
+                                            keycloakUserId);
+
+                                } catch (KeycloakUserDeletionException exception) {
+
+                                    log.error("An error occurred while trying to delete Keycloak identity: keycloakUserId={}",
+                                            keycloakUserId,
+                                            exception);
+                                }
+                            } else if (status == STATUS_COMMITTED) {
+
+                                log.info("User registration transaction committed: keycloakUserId={}", keycloakUserId);
                             }
                         }
                     }
@@ -72,9 +108,13 @@ public class UserService {
 
             userRepository.save(user);
 
+            log.info("User saved to database: userId={}", user.getId());
+
             applicationEventPublisher.publishEvent(
                     new UserRegistered(user.getId())
             );
+
+            log.info("UserRegistered event published: userId={}", user.getId());
 
         });
 
@@ -124,6 +164,8 @@ public class UserService {
         user.updateAdditionalInfo(country, city, phone);
 
         userRepository.save(user);
+
+        log.info("Additional user information updated: keycloakUserId={}", keycloakId);
     }
 
 
