@@ -36,6 +36,9 @@ public class UserJpaEntity {
     @Column(name = "registration_date", nullable = false)
     private Instant registrationDate;
 
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted;
+
     protected UserJpaEntity() {
     }
 
@@ -58,6 +61,7 @@ public class UserJpaEntity {
         this.country = country;
         this.city = city;
         this.registrationDate = registrationDate;
+        this.isDeleted = false;
     }
 
     public void setFirstName(String firstName) {
@@ -82,6 +86,14 @@ public class UserJpaEntity {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 
     public UUID getId() {
