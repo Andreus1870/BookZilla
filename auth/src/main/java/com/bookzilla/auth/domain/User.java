@@ -23,6 +23,8 @@ public class User {
 
     private final Instant registrationDate;
 
+    private boolean isDeleted;
+
 
     public User(String firstName,
                 String lastName,
@@ -35,6 +37,7 @@ public class User {
         this.lastName = lastName;
         this.email = email;
         this.registrationDate = Instant.now();
+        this.isDeleted = false;
     }
 
     public User(UUID id,
@@ -56,6 +59,7 @@ public class User {
         this.country = country;
         this.city = city;
         this.registrationDate = registrationDate;
+        this.isDeleted = false;
     }
 
     public UUID getId() {
@@ -92,6 +96,10 @@ public class User {
 
     public UUID getKeycloakId() {
         return keycloakId;
+    }
+
+    public boolean getDeleted() {
+        return isDeleted;
     }
 
     public void updateAdditionalInfo(String country,
