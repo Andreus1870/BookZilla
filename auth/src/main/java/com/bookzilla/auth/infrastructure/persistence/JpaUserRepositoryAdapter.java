@@ -1,7 +1,9 @@
 package com.bookzilla.auth.infrastructure.persistence;
 
+import com.bookzilla.auth.application.exception.UserNotFoundException;
 import com.bookzilla.auth.application.port.out.UserRepository;
 import com.bookzilla.auth.domain.User;
+import com.bookzilla.auth.infrastructure.persistence.entity.UserJpaEntity;
 import com.bookzilla.auth.infrastructure.persistence.mapper.UserMapper;
 import org.springframework.stereotype.Component;
 
@@ -49,15 +51,16 @@ public class JpaUserRepositoryAdapter implements UserRepository {
     }
 
     @Override
-    public void deleteUserByEmail(String email) {
-        jpaUserRepository.deleteUserByEmail(email);
-    }
-
-    @Override
     public List<User> getAllUsers() {
         return jpaUserRepository.findAll()
                 .stream()
                 .map(userMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public void deleteUserByEmail(String email) {
+
+        jpaUserRepository.softDeleteByEmail(email);
     }
 }
