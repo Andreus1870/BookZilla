@@ -36,25 +36,23 @@ public class KeycloakTokenProvider implements TokenProvider {
             @Value("${keycloak.oauth.client-id}") String clientId
     ) {
         this(
-                restClientBuilder,
+                restClientBuilder
+                        .requestFactory(createRequestFactory())
+                        .build(),
                 tokenUrl,
-                clientId,
-                createRequestFactory()
+                clientId
         );
     }
 
     KeycloakTokenProvider(
-            RestClient.Builder restClientBuilder,
+            RestClient restClient,
             String tokenUrl,
-            String clientId,
-            ClientHttpRequestFactory requestFactory
+            String clientId
     ) {
         this.tokenUrl = tokenUrl;
         this.clientId = clientId;
 
-        this.restClient = restClientBuilder
-                .requestFactory(requestFactory)
-                .build();
+        this.restClient = restClient;
     }
 
     private static ClientHttpRequestFactory createRequestFactory() {
@@ -162,6 +160,6 @@ public class KeycloakTokenProvider implements TokenProvider {
 
     private record KeycloakErrorResponse(
             String error
-    ){
+    ) {
     }
 }
