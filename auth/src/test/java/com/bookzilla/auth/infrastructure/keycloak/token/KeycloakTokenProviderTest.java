@@ -120,4 +120,19 @@ public class KeycloakTokenProviderTest {
         server.verify();
     }
 
+
+    @Test
+    void shouldThrowKeycloakUnexpectedResponseExceptionWhenServerErrorOccurs() {
+        // arrange
+        server.expect(requestTo(TOKEN_URL))
+                .andExpect(method(POST))
+                .andRespond(withServerError());
+
+        // act and assert
+        assertThatThrownBy(() -> tokenProvider.refreshToken(REFRESH_TOKEN))
+                .isInstanceOf(KeycloakUnexpectedResponseException.class)
+                .hasMessage("Keycloak token endpoint returned a server error");
+
+        server.verify();
+    }
 }
