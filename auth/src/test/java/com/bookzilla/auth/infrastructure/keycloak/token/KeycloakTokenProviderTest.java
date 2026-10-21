@@ -1,6 +1,7 @@
 package com.bookzilla.auth.infrastructure.keycloak.token;
 
 import com.bookzilla.auth.application.dto.RefreshTokenResponse;
+import com.bookzilla.auth.infrastructure.keycloak.exception.InvalidRefreshTokenException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -10,8 +11,10 @@ import org.springframework.web.client.RestClient;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 public class KeycloakTokenProviderTest {
@@ -80,5 +83,24 @@ public class KeycloakTokenProviderTest {
         assertThat(response.tokenType()).isEqualTo("Bearer");
 
         server.verify();
+    }
+
+    @Test
+    void shouldThrowInvalidRefreshTokenExceptionWhenRefreshTokenIsInvalid() {
+        // arrange
+        server.expect(requestTo(TOKEN_URL))
+                .andExpect(method(POST))
+                .andRespond(withBadRequest()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body("""
+                                {
+                                "error": "invalid_grant",
+                                "error_description": "Invalid refresh token"
+                                }
+                                """));
+
+        // act and assert
+        assertThatThrownBy(() -> tokenProvider.refreshToken(REFRESH_TOKEN))
+                .isInstanceOf(InvalidRefreshTokenException.class);
     }
 }
