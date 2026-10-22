@@ -1,6 +1,7 @@
 package com.bookzilla.auth.domain.operation;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
 
 public class RetryableOperation {
@@ -33,6 +34,73 @@ public class RetryableOperation {
         this.lastError = lastError;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    public void markInProgress() {
+
+        if (this.operationStatus == OperationStatus.PENDING) {
+
+            this.operationStatus = OperationStatus.IN_PROGRESS;
+            this.updatedAt = Instant.now();
+            this.attemptCount++;
+
+        } else {
+            throw new IllegalStateException(
+                    "Cannot mark operation as IN_PROGRESS because its current status is not PENDING"
+            );
+        }
+
+    }
+
+    public void markCompleted() {
+
+        if (this.operationStatus == OperationStatus.IN_PROGRESS) {
+
+            this.operationStatus = OperationStatus.COMPLETED;
+            this.updatedAt = Instant.now();
+            this.lastError = null;
+
+        } else {
+            throw new IllegalStateException(
+                    "Cannot mark operation as COMPLETED because its current status is not IN_PROGRESS"
+            );
+        }
+
+    }
+
+    public void scheduleRetry(Instant nextAttemptAt, String lastError) {
+
+        Objects.requireNonNull(nextAttemptAt, "nextAttemptAt cannot be null");
+        Objects.requireNonNull(lastError, "lastError cannot be null");
+
+
+        if (this.operationStatus == OperationStatus.IN_PROGRESS) {
+
+            this.operationStatus = OperationStatus.PENDING;
+            this.updatedAt = Instant.now();
+            this.nextAttemptAt = nextAttemptAt;
+            this.lastError = lastError;
+
+        } else {
+            throw new IllegalStateException(
+                    "Cannot schedule retry because its current status is not IN_PROGRESS"
+            );
+        }
+
+    }
+
+    public void markDead() {
+
+        if (this.operationStatus == OperationStatus.PENDING) {
+
+            this.operationStatus = OperationStatus.DEAD;
+            this.updatedAt = Instant.now();
+
+        } else {
+            throw new IllegalStateException(
+                    "Cannot mark dead because its current status is not PENDING"
+            );
+        }
     }
 
     public UUID getId() {
