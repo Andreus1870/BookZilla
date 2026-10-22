@@ -29,7 +29,8 @@ class UserMapperTest {
                 "+48123456789",
                 "Poland",
                 "Poznan",
-                registrationDate
+                registrationDate,
+                false
         );
 
         // act
@@ -63,7 +64,8 @@ class UserMapperTest {
                 "+48123456789",
                 "Poland",
                 "Poznan",
-                registrationDate
+                registrationDate,
+                false
         );
 
         // act

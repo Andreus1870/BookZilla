@@ -55,7 +55,8 @@ public class JpaUserRepositoryAdapterTest {
                 null,
                 null,
                 null,
-                user.getRegistrationDate()
+                user.getRegistrationDate(),
+                false
         );
 
         when(userMapper.toEntity(user)).thenReturn(jpaUser);
@@ -98,7 +99,8 @@ public class JpaUserRepositoryAdapterTest {
                 null,
                 null,
                 null,
-                user.getRegistrationDate()
+                user.getRegistrationDate(),
+                false
         );
 
         Optional<UserJpaEntity> optionalUserJpa = Optional.of(jpaUser);
@@ -179,7 +181,8 @@ public class JpaUserRepositoryAdapterTest {
                 null,
                 null,
                 null,
-                user.getRegistrationDate()
+                user.getRegistrationDate(),
+                false
         );
 
         Optional<UserJpaEntity> optionalUserJpa = Optional.of(jpaUser);
@@ -226,7 +229,7 @@ public class JpaUserRepositoryAdapterTest {
         jpaUserRepositoryAdapter.deleteUserByEmail(email);
 
         // assert
-        verify(jpaUserRepository).deleteUserByEmail(email);
+        verify(jpaUserRepository).softDeleteByEmail(email);
 
     }
 
@@ -256,7 +259,8 @@ public class JpaUserRepositoryAdapterTest {
                 null,
                 null,
                 null,
-                userOne.getRegistrationDate()
+                userOne.getRegistrationDate(),
+                false
         );
 
 
@@ -281,7 +285,8 @@ public class JpaUserRepositoryAdapterTest {
                 null,
                 null,
                 null,
-                userTwo.getRegistrationDate()
+                userTwo.getRegistrationDate(),
+                false
         );
 
         List<UserJpaEntity> userJpaList = List.of(jpaUserOne, jpaUserTwo);

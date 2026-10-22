@@ -20,7 +20,42 @@ public class JdbcRetryableOperationRepositoryAdapter implements RetryableOperati
 
     @Override
     public RetryableOperation save(RetryableOperation operation) {
-        return null;
+        jdbcClient.sql("""
+            INSERT INTO retryable_operations (
+                id,
+                operation_type,
+                payload,
+                status,
+                attempt_count,
+                next_attempt_at,
+                last_error,
+                created_at,
+                updated_at
+            )
+            VALUES (
+                :id,
+                :operationType,
+                CAST(:payload AS jsonb),
+                :status,
+                :attemptCount,
+                :nextAttemptAt,
+                :lastError,
+                :createdAt,
+                :updatedAt
+            )
+            """)
+                .param("id", operation.getId())
+                .param("operationType", operation.getOperationType().name())
+                .param("payload", operation.getPayload())
+                .param("status", operation.getOperationStatus().name())
+                .param("attemptCount", operation.getAttemptCount())
+                .param("nextAttemptAt", operation.getNextAttemptAt())
+                .param("lastError", operation.getLastError())
+                .param("createdAt", operation.getCreatedAt())
+                .param("updatedAt", operation.getUpdatedAt())
+                .update();
+
+        return operation;
     }
 
     @Override
