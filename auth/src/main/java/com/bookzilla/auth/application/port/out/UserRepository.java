@@ -16,7 +16,7 @@ public interface UserRepository {
 
     Optional<User> getUserByKeycloakId(UUID keycloakId);
 
-    void deleteUserByEmail(String email);
+    boolean deleteUserByEmail(String email);
 
     List<User> getAllUsers();
 }

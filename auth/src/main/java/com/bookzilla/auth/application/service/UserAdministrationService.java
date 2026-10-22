@@ -2,6 +2,7 @@ package com.bookzilla.auth.application.service;
 
 import com.bookzilla.auth.application.dto.UserShortInfo;
 import com.bookzilla.auth.application.exception.CannotDeleteModeratorException;
+import com.bookzilla.auth.application.exception.UserDeletionException;
 import com.bookzilla.auth.application.exception.UserNotFoundException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
@@ -47,9 +48,13 @@ public class UserAdministrationService {
             throw new CannotDeleteModeratorException("Moderators cannot delete other moderators");
         }
 
-        identityProvider.deleteKeycloakUserRepresentation(keycloakId);
+        if (!userRepository.deleteUserByEmail(email)) {
+            throw new UserDeletionException(
+                    "Failed to delete user: " + email
+            );
+        }
 
-        userRepository.deleteUserByEmail(email);
+        identityProvider.deleteKeycloakUserRepresentation(keycloakId);
 
         UUID userToDeleteUuid = user.getId();
 
