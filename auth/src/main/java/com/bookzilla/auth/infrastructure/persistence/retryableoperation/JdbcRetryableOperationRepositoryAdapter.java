@@ -60,6 +60,25 @@ public class JdbcRetryableOperationRepositoryAdapter implements RetryableOperati
 
     @Override
     public List<RetryableOperation> findReadyToRetry(Instant now, int limit) {
-        return List.of();
+
+        if (limit <= 0) {
+            throw new IllegalArgumentException("Limit must be greater than zero.");
+        }
+
+        return jdbcClient.sql(
+        """
+        SELECT *
+        FROM retryable_operations
+        WHERE status = 'PENDING'
+            AND next_attempt_at <= :now
+        ORDER BY next_attempt_at, created_at
+        LIMIT :limit
+        """)
+            .param("now", now)
+            .param("limit", limit)
+            .query(new RetryableOperationRowMapper())
+            .list();
+
     }
+
 }
