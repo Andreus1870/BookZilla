@@ -1,6 +1,6 @@
 package com.bookzilla.auth.infrastructure.persistence.mapper;
 
-import com.bookzilla.auth.domain.User;
+import com.bookzilla.auth.domain.user.User;
 import com.bookzilla.auth.infrastructure.persistence.entity.UserJpaEntity;
 import org.springframework.stereotype.Component;
 

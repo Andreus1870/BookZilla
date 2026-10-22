@@ -5,7 +5,7 @@ import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
 import com.bookzilla.auth.application.exception.UserNotFoundException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
-import com.bookzilla.auth.domain.User;
+import com.bookzilla.auth.domain.user.User;
 import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUserDeletionException;
 import com.bookzilla.contracts.event.UserRegistered;
 import org.slf4j.Logger;

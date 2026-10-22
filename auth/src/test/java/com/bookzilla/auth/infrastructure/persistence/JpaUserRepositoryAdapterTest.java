@@ -1,6 +1,6 @@
 package com.bookzilla.auth.infrastructure.persistence;
 
-import com.bookzilla.auth.domain.User;
+import com.bookzilla.auth.domain.user.User;
 import com.bookzilla.auth.infrastructure.persistence.entity.UserJpaEntity;
 import com.bookzilla.auth.infrastructure.persistence.mapper.UserMapper;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,6 @@
 package com.bookzilla.auth.application.port.out;
 
-import com.bookzilla.auth.domain.User;
+import com.bookzilla.auth.domain.user.User;
 
 import java.util.List;
 import java.util.Optional;
