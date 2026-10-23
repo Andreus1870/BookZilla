@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class JdbcRetryableOperationRepositoryAdapter implements RetryableOperationRepository {
@@ -81,4 +82,22 @@ public class JdbcRetryableOperationRepositoryAdapter implements RetryableOperati
 
     }
 
+    @Override
+    public boolean markInProgressIfPending(UUID id, Instant now) {
+
+        int updatedRows = jdbcClient.sql(
+                        """
+                        UPDATE retryable_operations
+                        SET status = 'IN_PROGRESS',
+                            attempt_count = attempt_count + 1,
+                            updated_at = :now
+                        WHERE id = :id
+                            AND status = 'PENDING'
+                        """)
+                .param("now", now)
+                .param("id", id)
+                .update();
+
+        return updatedRows == 1;
+    }
 }
