@@ -4,6 +4,7 @@ import com.bookzilla.auth.domain.operation.RetryableOperation;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 public interface RetryableOperationRepository {
 
@@ -11,4 +12,5 @@ public interface RetryableOperationRepository {
 
     List<RetryableOperation> findReadyToRetry(Instant now, int limit);
 
+    boolean markInProgressIfPending(UUID id, Instant now);
 }
