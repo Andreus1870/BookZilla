@@ -91,14 +91,14 @@ public class RetryableOperation {
 
     public void markDead() {
 
-        if (this.operationStatus == OperationStatus.PENDING) {
+        if (this.operationStatus == OperationStatus.IN_PROGRESS) {
 
             this.operationStatus = OperationStatus.DEAD;
             this.updatedAt = Instant.now();
 
         } else {
             throw new IllegalStateException(
-                    "Cannot mark dead because its current status is not PENDING"
+                    "Cannot mark dead because its current status is not IN_PROGRESS"
             );
         }
     }
