@@ -1,4 +1,4 @@
-package com.bookzilla.auth.application.service;
+package com.bookzilla.auth.application.service.token;
 
 import com.bookzilla.auth.application.port.out.TokenProvider;
 import com.bookzilla.auth.application.dto.RefreshTokenResponse;

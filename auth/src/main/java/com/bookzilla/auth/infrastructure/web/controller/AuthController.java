@@ -1,8 +1,8 @@
 package com.bookzilla.auth.infrastructure.web.controller;
 
 import com.bookzilla.auth.application.dto.RefreshTokenResponse;
-import com.bookzilla.auth.application.service.TokenRefreshService;
-import com.bookzilla.auth.application.service.UserService;
+import com.bookzilla.auth.application.service.token.TokenRefreshService;
+import com.bookzilla.auth.application.service.user.UserService;
 import com.bookzilla.auth.infrastructure.web.dto.RefreshTokenRequest;
 import com.bookzilla.auth.infrastructure.web.dto.RegisterRequest;
 import jakarta.validation.Valid;

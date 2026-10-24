@@ -1,6 +1,6 @@
 package com.bookzilla.auth.infrastructure.web.controller;
 
-import com.bookzilla.auth.application.service.UserRoleService;
+import com.bookzilla.auth.application.service.user.UserRoleService;
 import com.bookzilla.auth.infrastructure.web.dto.DowngradeModeratorRequest;
 import com.bookzilla.auth.infrastructure.web.dto.PromoteToModeratorRequest;
 import org.junit.jupiter.api.Test;

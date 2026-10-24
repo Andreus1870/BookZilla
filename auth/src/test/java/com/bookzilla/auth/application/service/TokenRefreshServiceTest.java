@@ -2,6 +2,7 @@ package com.bookzilla.auth.application.service;
 
 import com.bookzilla.auth.application.dto.RefreshTokenResponse;
 import com.bookzilla.auth.application.port.out.TokenProvider;
+import com.bookzilla.auth.application.service.token.TokenRefreshService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

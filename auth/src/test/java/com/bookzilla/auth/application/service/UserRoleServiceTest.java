@@ -6,6 +6,7 @@ import com.bookzilla.auth.application.exception.CannotDowngradeUserException;
 import com.bookzilla.auth.application.exception.CannotPromoteAdminException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
+import com.bookzilla.auth.application.service.user.UserRoleService;
 import com.bookzilla.auth.domain.user.BusinessRole;
 import com.bookzilla.auth.domain.user.User;
 import org.junit.jupiter.api.BeforeEach;

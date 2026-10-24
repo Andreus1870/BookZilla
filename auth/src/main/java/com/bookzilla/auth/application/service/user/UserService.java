@@ -1,4 +1,4 @@
-package com.bookzilla.auth.application.service;
+package com.bookzilla.auth.application.service.user;
 
 import com.bookzilla.auth.application.dto.UserInfo;
 import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;

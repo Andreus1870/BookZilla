@@ -5,6 +5,7 @@ import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
 import com.bookzilla.auth.application.exception.UserNotFoundException;
 import com.bookzilla.auth.application.port.out.IdentityProvider;
 import com.bookzilla.auth.application.port.out.UserRepository;
+import com.bookzilla.auth.application.service.user.UserService;
 import com.bookzilla.auth.domain.user.BusinessRole;
 import com.bookzilla.auth.domain.user.User;
 import com.bookzilla.contracts.event.UserRegistered;
