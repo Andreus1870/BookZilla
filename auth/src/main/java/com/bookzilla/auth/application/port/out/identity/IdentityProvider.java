@@ -1,4 +1,4 @@
-package com.bookzilla.auth.application.port.out;
+package com.bookzilla.auth.application.port.out.identity;
 
 import com.bookzilla.auth.domain.user.BusinessRole;
 

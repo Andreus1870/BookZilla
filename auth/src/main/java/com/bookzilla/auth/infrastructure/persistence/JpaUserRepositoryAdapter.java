@@ -1,6 +1,6 @@
 package com.bookzilla.auth.infrastructure.persistence;
 
-import com.bookzilla.auth.application.port.out.UserRepository;
+import com.bookzilla.auth.application.port.out.user.UserRepository;
 import com.bookzilla.auth.domain.user.User;
 import com.bookzilla.auth.infrastructure.persistence.mapper.UserMapper;
 import org.springframework.stereotype.Component;

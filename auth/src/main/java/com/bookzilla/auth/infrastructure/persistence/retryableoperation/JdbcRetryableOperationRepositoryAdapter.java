@@ -1,6 +1,6 @@
 package com.bookzilla.auth.infrastructure.persistence.retryableoperation;
 
-import com.bookzilla.auth.application.port.out.RetryableOperationRepository;
+import com.bookzilla.auth.application.port.out.retryable.RetryableOperationRepository;
 import com.bookzilla.auth.domain.operation.RetryableOperation;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Component;

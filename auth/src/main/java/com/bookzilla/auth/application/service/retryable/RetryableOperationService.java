@@ -1,6 +1,6 @@
 package com.bookzilla.auth.application.service.retryable;
 
-import com.bookzilla.auth.application.port.out.RetryableOperationRepository;
+import com.bookzilla.auth.application.port.out.retryable.RetryableOperationRepository;
 import com.bookzilla.auth.domain.operation.RetryableOperation;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.bookzilla.auth.application.port.out;
+package com.bookzilla.auth.application.port.out.retryable;
 
 import com.bookzilla.auth.domain.operation.RetryableOperation;
 

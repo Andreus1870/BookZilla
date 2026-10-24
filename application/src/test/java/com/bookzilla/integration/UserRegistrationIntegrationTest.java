@@ -1,6 +1,6 @@
 package com.bookzilla.integration;
 
-import com.bookzilla.auth.application.port.out.IdentityProvider;
+import com.bookzilla.auth.application.port.out.identity.IdentityProvider;
 import com.bookzilla.auth.domain.user.User;
 import com.bookzilla.auth.infrastructure.persistence.JpaUserRepository;
 import com.bookzilla.auth.infrastructure.persistence.mapper.UserMapper;
