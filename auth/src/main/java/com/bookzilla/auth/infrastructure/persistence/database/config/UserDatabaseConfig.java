@@ -1,4 +1,4 @@
-package com.bookzilla.auth.infrastructure.persistence;
+package com.bookzilla.auth.infrastructure.persistence.database.config;
 
 import com.bookzilla.auth.infrastructure.persistence.entity.UserJpaEntity;
 import com.zaxxer.hikari.HikariDataSource;

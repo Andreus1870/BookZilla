@@ -2,10 +2,12 @@ package com.bookzilla.auth.infrastructure.persistence.retryableoperation;
 
 import com.bookzilla.auth.application.port.out.retryable.RetryableOperationRepository;
 import com.bookzilla.auth.domain.operation.RetryableOperation;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,7 +16,9 @@ public class JdbcRetryableOperationRepositoryAdapter implements RetryableOperati
 
     private final JdbcClient jdbcClient;
 
-    public JdbcRetryableOperationRepositoryAdapter(JdbcClient jdbcClient) {
+    public JdbcRetryableOperationRepositoryAdapter(
+            @Qualifier("compensationJdbcClient") JdbcClient jdbcClient
+    ) {
         this.jdbcClient = jdbcClient;
     }
 
@@ -22,7 +26,7 @@ public class JdbcRetryableOperationRepositoryAdapter implements RetryableOperati
     @Override
     public RetryableOperation save(RetryableOperation operation) {
         jdbcClient.sql("""
-            INSERT INTO retryable_operations (
+            INSERT INTO auth_retryable_operations (
                 id,
                 operation_type,
                 payload,
@@ -69,13 +73,13 @@ public class JdbcRetryableOperationRepositoryAdapter implements RetryableOperati
         return jdbcClient.sql(
         """
         SELECT *
-        FROM retryable_operations
+        FROM auth_retryable_operations
         WHERE status = 'PENDING'
             AND next_attempt_at <= :now
         ORDER BY next_attempt_at, created_at
         LIMIT :limit
         """)
-            .param("now", now)
+            .param("now", now.atOffset(ZoneOffset.UTC))
             .param("limit", limit)
             .query(new RetryableOperationRowMapper())
             .list();
@@ -87,14 +91,14 @@ public class JdbcRetryableOperationRepositoryAdapter implements RetryableOperati
 
         int updatedRows = jdbcClient.sql(
                         """
-                        UPDATE retryable_operations
+                        UPDATE auth_retryable_operations
                         SET status = 'IN_PROGRESS',
                             attempt_count = attempt_count + 1,
                             updated_at = :now
                         WHERE id = :id
                             AND status = 'PENDING'
                         """)
-                .param("now", now)
+                .param("now", now.atOffset(ZoneOffset.UTC))
                 .param("id", id)
                 .update();
 
