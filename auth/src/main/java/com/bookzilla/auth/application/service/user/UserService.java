@@ -79,86 +79,11 @@ public class UserService {
 
 
         transactionTemplate.executeWithoutResult(status -> {
-
             TransactionSynchronizationManager.registerSynchronization(
                     new TransactionSynchronization() {
                         @Override
                         public void afterCompletion(int status) {
-
-                            if (status == STATUS_ROLLED_BACK) {
-
-                                log.warn(
-                                        "User database transaction rolled back." +
-                                                " Starting Keycloak identity cleanup: keycloakUserId={}",
-                                        keycloakUserId);
-
-                                try {
-
-                                    identityProvider.deleteKeycloakUserRepresentation(
-                                            keycloakUserId
-                                    );
-
-                                    log.info("Compensation was executed successfully. " +
-                                                    "Keycloak identity was deleted: keycloakUserId={}",
-                                            keycloakUserId);
-
-                                } catch (KeycloakUserDeletionException exception) {
-
-                                    log.error("An error occurred while trying to delete Keycloak identity: keycloakUserId={}",
-                                            keycloakUserId,
-                                            exception);
-
-
-                                    try {
-
-                                        String payload;
-
-                                        payload = objectMapper.writeValueAsString(
-                                                new DeleteKeycloakUserPayload(keycloakUserId)
-                                        );
-
-
-                                        Instant now = Instant.now();
-
-                                        RetryableOperation retryableOperation = new RetryableOperation(
-                                                UUID.randomUUID(),
-                                                OperationType.DELETE_KEYCLOAK_USER,
-                                                payload,
-                                                OperationStatus.PENDING,
-                                                0,
-                                                now,
-                                                exception.getMessage() != null
-                                                        ? exception.getMessage()
-                                                        : exception.getClass().getSimpleName(),
-                                                now,
-                                                now
-                                        );
-
-                                        retryableOperationRepository.save(retryableOperation);
-
-                                        log.info(
-                                                "Retryable operation saved: operationId={}, operationType={}, keycloakUserId={}",
-                                                retryableOperation.getId(),
-                                                retryableOperation.getOperationType(),
-                                                keycloakUserId
-                                        );
-
-                                    }   catch (Exception retrySaveException){
-
-                                        log.error(
-                                                "Failed to save retryable operation: keycloakUserId={}",
-                                                keycloakUserId,
-                                                retrySaveException
-                                        );
-                                    }
-
-
-
-                                }
-                            } else if (status == STATUS_COMMITTED) {
-
-                                log.info("User registration transaction committed: keycloakUserId={}", keycloakUserId);
-                            }
+                            registerRollbackCompensation(status, keycloakUserId);
                         }
                     }
             );
@@ -176,7 +101,6 @@ public class UserService {
             );
 
             log.info("UserRegistered event published: userId={}", user.getId());
-
         });
 
     }
@@ -227,6 +151,93 @@ public class UserService {
         userRepository.save(user);
 
         log.info("Additional user information updated: keycloakUserId={}", keycloakId);
+    }
+
+
+    private void registerRollbackCompensation(int status, UUID keycloakUserId) {
+        if (status == TransactionSynchronization.STATUS_ROLLED_BACK) {
+            log.warn(
+                    "User database transaction rolled back. " +
+                            "Starting Keycloak identity cleanup: keycloakUserId={}",
+                    keycloakUserId
+            );
+
+            deleteKeycloakIdentity(keycloakUserId);
+
+        } else if (status == TransactionSynchronization.STATUS_COMMITTED) {
+            log.info(
+                    "User registration transaction committed: keycloakUserId={}",
+                    keycloakUserId
+            );
+        }
+    }
+
+
+    private void deleteKeycloakIdentity(UUID keycloakUserId) {
+        try {
+            identityProvider.deleteKeycloakUserRepresentation(keycloakUserId);
+
+            log.info(
+                    "Compensation was executed successfully. " +
+                            "Keycloak identity was deleted: keycloakUserId={}",
+                    keycloakUserId
+            );
+
+        } catch (KeycloakUserDeletionException exception) {
+            log.error(
+                    "An error occurred while trying to delete Keycloak identity: " +
+                            "keycloakUserId={}",
+                    keycloakUserId,
+                    exception
+            );
+
+            saveRetryableKeycloakDeletion(keycloakUserId, exception);
+        }
+    }
+
+
+    private void saveRetryableKeycloakDeletion(
+            UUID keycloakUserId,
+            KeycloakUserDeletionException exception
+    ) {
+        try {
+            String payload = objectMapper.writeValueAsString(
+                    new DeleteKeycloakUserPayload(keycloakUserId)
+            );
+
+            Instant now = Instant.now();
+
+            RetryableOperation retryableOperation = new RetryableOperation(
+                    UUID.randomUUID(),
+                    OperationType.DELETE_KEYCLOAK_USER,
+                    payload,
+                    OperationStatus.PENDING,
+                    0,
+                    now,
+                    exception.getMessage() != null
+                            ? exception.getMessage()
+                            : exception.getClass().getSimpleName(),
+                    now,
+                    now
+            );
+
+            retryableOperationRepository.save(retryableOperation);
+
+            log.info(
+                    "Retryable operation saved: operationId={}, " +
+                            "operationType={}, keycloakUserId={}",
+                    retryableOperation.getId(),
+                    retryableOperation.getOperationType(),
+                    keycloakUserId
+            );
+
+        } catch (Exception retrySaveException) {
+            log.error(
+                    "Failed to save retryable operation: keycloakUserId={}",
+                    keycloakUserId,
+                    retrySaveException
+            );
+        }
     }
 
 
