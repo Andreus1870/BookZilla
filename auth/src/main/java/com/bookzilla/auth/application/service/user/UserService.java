@@ -4,8 +4,8 @@ import com.bookzilla.auth.application.dto.UserInfo;
 import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
 import com.bookzilla.auth.application.exception.UserNotFoundException;
 import com.bookzilla.auth.application.port.out.identity.IdentityProvider;
+import com.bookzilla.auth.application.port.out.retryable.RetryableOperationRepository;
 import com.bookzilla.auth.application.port.out.user.UserRepository;
-import com.bookzilla.auth.application.service.retryable.RetryableOperationService;
 import com.bookzilla.auth.domain.operation.OperationStatus;
 import com.bookzilla.auth.domain.operation.OperationType;
 import com.bookzilla.auth.domain.operation.RetryableOperation;
@@ -13,7 +13,6 @@ import com.bookzilla.auth.domain.operation.payload.DeleteKeycloakUserPayload;
 import com.bookzilla.auth.domain.user.User;
 import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUserDeletionException;
 import com.bookzilla.contracts.event.UserRegistered;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +26,6 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.Instant;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -36,7 +34,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final IdentityProvider identityProvider;
-    private final RetryableOperationService retryableOperationService;
+    private final RetryableOperationRepository retryableOperationRepository;
     private final TransactionTemplate transactionTemplate;
 
     private final ObjectMapper objectMapper;
@@ -48,12 +46,13 @@ public class UserService {
     public UserService(UserRepository userRepository,
                        ApplicationEventPublisher applicationEventPublisher,
                        IdentityProvider identityProvider,
-                       RetryableOperationService retryableOperationService,
-                       @Qualifier("userTransactionManager") PlatformTransactionManager transactionManager, ObjectMapper objectMapper) {
+                       RetryableOperationRepository retryableOperationRepository,
+                       @Qualifier("userTransactionManager") PlatformTransactionManager transactionManager,
+                       ObjectMapper objectMapper) {
         this.userRepository = userRepository;
         this.applicationEventPublisher = applicationEventPublisher;
         this.identityProvider = identityProvider;
-        this.retryableOperationService = retryableOperationService;
+        this.retryableOperationRepository = retryableOperationRepository;
         this.transactionTemplate = new TransactionTemplate(transactionManager);
         this.objectMapper = objectMapper;
     }
@@ -135,7 +134,7 @@ public class UserService {
                                                 now
                                         );
 
-                                        retryableOperationService.saveRetryableOperation(retryableOperation);
+                                        retryableOperationRepository.save(retryableOperation);
 
                                         log.info(
                                                 "Retryable operation saved: operationId={}, operationType={}, keycloakUserId={}",
