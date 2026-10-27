@@ -13,4 +13,6 @@ public interface RetryableOperationRepository {
     List<RetryableOperation> findReadyToRetry(Instant now, int limit);
 
     boolean markInProgressIfPending(UUID id, Instant now);
+
+    void update(RetryableOperation retryableOperation);
 }

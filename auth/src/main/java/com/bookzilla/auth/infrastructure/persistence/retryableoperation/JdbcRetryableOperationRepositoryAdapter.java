@@ -104,4 +104,34 @@ public class JdbcRetryableOperationRepositoryAdapter implements RetryableOperati
 
         return updatedRows == 1;
     }
+
+    @Override
+    public void update(RetryableOperation retryableOperation) {
+
+        int updatedRows = jdbcClient.sql(
+        """
+        UPDATE auth_retryable_operations
+        SET status = :status,
+            updated_at = :updated_at,
+            next_attempt_at = :next_attempt_at,
+            last_error = :last_error
+        WHERE
+            id = :id
+        """)
+        .param("status", retryableOperation.getOperationStatus().name())
+        .param("updated_at", retryableOperation.getUpdatedAt())
+        .param("next_attempt_at", retryableOperation.getNextAttemptAt())
+        .param("last_error", retryableOperation.getLastError())
+        .param("id", retryableOperation.getId())
+                .update();
+
+        if (updatedRows != 1) {
+            throw new IllegalStateException(
+                    "Expected to update exactly one retryable operation, but updated "
+                            + updatedRows
+                            + " rows. Operation ID: "
+                            + retryableOperation.getId()
+            );
+        }
+    }
 }
