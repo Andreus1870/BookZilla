@@ -1,4 +1,4 @@
-package com.bookzilla.auth.domain;
+package com.bookzilla.auth.domain.user;
 
 import java.time.Instant;
 import java.util.UUID;

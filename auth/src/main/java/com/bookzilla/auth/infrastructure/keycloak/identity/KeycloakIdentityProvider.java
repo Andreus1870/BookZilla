@@ -2,8 +2,8 @@ package com.bookzilla.auth.infrastructure.keycloak.identity;
 
 import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUserCreationException;
 import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUserDeletionException;
-import com.bookzilla.auth.application.port.out.IdentityProvider;
-import com.bookzilla.auth.domain.BusinessRole;
+import com.bookzilla.auth.application.port.out.identity.IdentityProvider;
+import com.bookzilla.auth.domain.user.BusinessRole;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;

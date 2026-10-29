@@ -1,6 +1,6 @@
 package com.bookzilla.auth.application.dto;
 
-import com.bookzilla.auth.domain.BusinessRole;
+import com.bookzilla.auth.domain.user.BusinessRole;
 
 import java.time.Instant;
 

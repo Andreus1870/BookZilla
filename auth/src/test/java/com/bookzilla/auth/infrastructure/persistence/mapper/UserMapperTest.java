@@ -1,6 +1,6 @@
 package com.bookzilla.auth.infrastructure.persistence.mapper;
 
-import com.bookzilla.auth.domain.User;
+import com.bookzilla.auth.domain.user.User;
 import com.bookzilla.auth.infrastructure.persistence.entity.UserJpaEntity;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +29,8 @@ class UserMapperTest {
                 "+48123456789",
                 "Poland",
                 "Poznan",
-                registrationDate
+                registrationDate,
+                false
         );
 
         // act
@@ -63,7 +64,8 @@ class UserMapperTest {
                 "+48123456789",
                 "Poland",
                 "Poznan",
-                registrationDate
+                registrationDate,
+                false
         );
 
         // act

@@ -1,9 +1,8 @@
 package com.bookzilla.auth.infrastructure.keycloak.identity;
 
-import com.bookzilla.auth.domain.BusinessRole;
+import com.bookzilla.auth.domain.user.BusinessRole;
 import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUserCreationException;
 import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUserDeletionException;
-import com.bookzilla.auth.infrastructure.keycloak.identity.KeycloakIdentityProvider;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

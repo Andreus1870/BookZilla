@@ -2,9 +2,9 @@ package com.bookzilla.auth.infrastructure.web.controller;
 
 import com.bookzilla.auth.application.dto.UserInfo;
 import com.bookzilla.auth.application.dto.UserShortInfo;
-import com.bookzilla.auth.application.service.UserAdministrationService;
-import com.bookzilla.auth.application.service.UserService;
-import com.bookzilla.auth.domain.BusinessRole;
+import com.bookzilla.auth.application.service.user.UserAdministrationService;
+import com.bookzilla.auth.application.service.user.UserService;
+import com.bookzilla.auth.domain.user.BusinessRole;
 import com.bookzilla.auth.infrastructure.web.dto.DeleteUserRequest;
 import com.bookzilla.auth.infrastructure.web.dto.GetUserInfoRequest;
 import org.junit.jupiter.api.Test;

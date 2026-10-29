@@ -1,13 +1,19 @@
-package com.bookzilla.auth.application.service;
+package com.bookzilla.auth.application.service.user;
 
 import com.bookzilla.auth.application.dto.UserInfo;
 import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
 import com.bookzilla.auth.application.exception.UserNotFoundException;
-import com.bookzilla.auth.application.port.out.IdentityProvider;
-import com.bookzilla.auth.application.port.out.UserRepository;
-import com.bookzilla.auth.domain.User;
+import com.bookzilla.auth.application.port.out.identity.IdentityProvider;
+import com.bookzilla.auth.application.port.out.retryable.RetryableOperationRepository;
+import com.bookzilla.auth.application.port.out.user.UserRepository;
+import com.bookzilla.auth.domain.operation.OperationStatus;
+import com.bookzilla.auth.domain.operation.OperationType;
+import com.bookzilla.auth.domain.operation.RetryableOperation;
+import com.bookzilla.auth.domain.operation.payload.DeleteKeycloakUserPayload;
+import com.bookzilla.auth.domain.user.User;
 import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUserDeletionException;
 import com.bookzilla.contracts.event.UserRegistered;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,6 +25,7 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Service
@@ -27,7 +34,10 @@ public class UserService {
     private final UserRepository userRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final IdentityProvider identityProvider;
+    private final RetryableOperationRepository retryableOperationRepository;
     private final TransactionTemplate transactionTemplate;
+
+    private final ObjectMapper objectMapper;
 
     private static final Logger log =
             LoggerFactory.getLogger(UserService.class);
@@ -36,11 +46,15 @@ public class UserService {
     public UserService(UserRepository userRepository,
                        ApplicationEventPublisher applicationEventPublisher,
                        IdentityProvider identityProvider,
-                       @Qualifier("userTransactionManager") PlatformTransactionManager transactionManager) {
+                       RetryableOperationRepository retryableOperationRepository,
+                       @Qualifier("userTransactionManager") PlatformTransactionManager transactionManager,
+                       ObjectMapper objectMapper) {
         this.userRepository = userRepository;
         this.applicationEventPublisher = applicationEventPublisher;
         this.identityProvider = identityProvider;
+        this.retryableOperationRepository = retryableOperationRepository;
         this.transactionTemplate = new TransactionTemplate(transactionManager);
+        this.objectMapper = objectMapper;
     }
 
     public void register(String firstName,
@@ -61,43 +75,15 @@ public class UserService {
                 firstName, lastName, email, password
         );
 
-        log.info("Keycloak identity created: keycloakUserId={}", keycloakUserId);
+        log.info("identity created: keycloakUserId={}", keycloakUserId);
 
 
         transactionTemplate.executeWithoutResult(status -> {
-
             TransactionSynchronizationManager.registerSynchronization(
                     new TransactionSynchronization() {
                         @Override
                         public void afterCompletion(int status) {
-
-                            if (status == STATUS_ROLLED_BACK) {
-
-                                log.warn(
-                                        "User database transaction rolled back." +
-                                                " Starting Keycloak identity cleanup: keycloakUserId={}",
-                                        keycloakUserId);
-
-                                try {
-
-                                    identityProvider.deleteKeycloakUserRepresentation(
-                                            keycloakUserId
-                                    );
-
-                                    log.info("Compensation was executed successfully. " +
-                                                    "Keycloak identity was deleted: keycloakUserId={}",
-                                            keycloakUserId);
-
-                                } catch (KeycloakUserDeletionException exception) {
-
-                                    log.error("An error occurred while trying to delete Keycloak identity: keycloakUserId={}",
-                                            keycloakUserId,
-                                            exception);
-                                }
-                            } else if (status == STATUS_COMMITTED) {
-
-                                log.info("User registration transaction committed: keycloakUserId={}", keycloakUserId);
-                            }
+                            registerRollbackCompensation(status, keycloakUserId);
                         }
                     }
             );
@@ -115,7 +101,6 @@ public class UserService {
             );
 
             log.info("UserRegistered event published: userId={}", user.getId());
-
         });
 
     }
@@ -166,6 +151,93 @@ public class UserService {
         userRepository.save(user);
 
         log.info("Additional user information updated: keycloakUserId={}", keycloakId);
+    }
+
+
+    private void registerRollbackCompensation(int status, UUID keycloakUserId) {
+        if (status == TransactionSynchronization.STATUS_ROLLED_BACK) {
+            log.warn(
+                    "User database transaction rolled back. " +
+                            "Starting Keycloak identity cleanup: keycloakUserId={}",
+                    keycloakUserId
+            );
+
+            deleteKeycloakIdentity(keycloakUserId);
+
+        } else if (status == TransactionSynchronization.STATUS_COMMITTED) {
+            log.info(
+                    "User registration transaction committed: keycloakUserId={}",
+                    keycloakUserId
+            );
+        }
+    }
+
+
+    private void deleteKeycloakIdentity(UUID keycloakUserId) {
+        try {
+            identityProvider.deleteKeycloakUserRepresentation(keycloakUserId);
+
+            log.info(
+                    "Compensation was executed successfully. " +
+                            "Keycloak identity was deleted: keycloakUserId={}",
+                    keycloakUserId
+            );
+
+        } catch (KeycloakUserDeletionException exception) {
+            log.error(
+                    "An error occurred while trying to delete Keycloak identity: " +
+                            "keycloakUserId={}",
+                    keycloakUserId,
+                    exception
+            );
+
+            saveRetryableKeycloakDeletion(keycloakUserId, exception);
+        }
+    }
+
+
+    private void saveRetryableKeycloakDeletion(
+            UUID keycloakUserId,
+            KeycloakUserDeletionException exception
+    ) {
+        try {
+            String payload = objectMapper.writeValueAsString(
+                    new DeleteKeycloakUserPayload(keycloakUserId)
+            );
+
+            Instant now = Instant.now();
+
+            RetryableOperation retryableOperation = new RetryableOperation(
+                    UUID.randomUUID(),
+                    OperationType.DELETE_KEYCLOAK_USER,
+                    payload,
+                    OperationStatus.PENDING,
+                    0,
+                    now,
+                    exception.getMessage() != null
+                            ? exception.getMessage()
+                            : exception.getClass().getSimpleName(),
+                    now,
+                    now
+            );
+
+            retryableOperationRepository.save(retryableOperation);
+
+            log.info(
+                    "Retryable operation saved: operationId={}, " +
+                            "operationType={}, keycloakUserId={}",
+                    retryableOperation.getId(),
+                    retryableOperation.getOperationType(),
+                    keycloakUserId
+            );
+
+        } catch (Exception retrySaveException) {
+            log.error(
+                    "Failed to save retryable operation: keycloakUserId={}",
+                    keycloakUserId,
+                    retrySaveException
+            );
+        }
     }
 
 

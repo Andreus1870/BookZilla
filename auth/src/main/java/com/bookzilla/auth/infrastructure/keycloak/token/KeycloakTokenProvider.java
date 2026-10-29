@@ -1,7 +1,7 @@
 package com.bookzilla.auth.infrastructure.keycloak.token;
 
 import com.bookzilla.auth.application.dto.RefreshTokenResponse;
-import com.bookzilla.auth.application.port.out.TokenProvider;
+import com.bookzilla.auth.application.port.out.token.TokenProvider;
 import com.bookzilla.auth.infrastructure.keycloak.exception.InvalidRefreshTokenException;
 import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUnavailableException;
 import com.bookzilla.auth.infrastructure.keycloak.exception.KeycloakUnexpectedResponseException;

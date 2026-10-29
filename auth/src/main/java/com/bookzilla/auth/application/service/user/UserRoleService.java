@@ -1,9 +1,9 @@
-package com.bookzilla.auth.application.service;
+package com.bookzilla.auth.application.service.user;
 
 import com.bookzilla.auth.application.exception.*;
-import com.bookzilla.auth.application.port.out.IdentityProvider;
-import com.bookzilla.auth.application.port.out.UserRepository;
-import com.bookzilla.auth.domain.BusinessRole;
+import com.bookzilla.auth.application.port.out.identity.IdentityProvider;
+import com.bookzilla.auth.application.port.out.user.UserRepository;
+import com.bookzilla.auth.domain.user.BusinessRole;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;

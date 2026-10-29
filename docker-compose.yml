@@ -7,3 +7,24 @@ services:
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+
+  compensation-db:
+    image: postgres:17
+    container_name: bookzilla-compensation-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: compensation_db
+      POSTGRES_USER: compensation_user
+      POSTGRES_PASSWORD: ${COMPENSATION_DB_PASSWORD}
+    ports:
+      - "5434:5432"
+    volumes:
+      - compensation-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U compensation_user -d compensation_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  compensation-db-data:

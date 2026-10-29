@@ -1,7 +1,7 @@
 package com.bookzilla.integration;
 
-import com.bookzilla.auth.application.port.out.IdentityProvider;
-import com.bookzilla.auth.domain.User;
+import com.bookzilla.auth.application.port.out.identity.IdentityProvider;
+import com.bookzilla.auth.domain.user.User;
 import com.bookzilla.auth.infrastructure.persistence.JpaUserRepository;
 import com.bookzilla.auth.infrastructure.persistence.mapper.UserMapper;
 import com.bookzilla.booking.domain.Client;
@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
