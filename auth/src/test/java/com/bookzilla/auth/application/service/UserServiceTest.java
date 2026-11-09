@@ -4,11 +4,13 @@ import com.bookzilla.auth.application.dto.UserInfo;
 import com.bookzilla.auth.application.exception.EmailAlreadyRegisteredException;
 import com.bookzilla.auth.application.exception.UserNotFoundException;
 import com.bookzilla.auth.application.port.out.identity.IdentityProvider;
+import com.bookzilla.auth.application.port.out.retryable.RetryableOperationRepository;
 import com.bookzilla.auth.application.port.out.user.UserRepository;
 import com.bookzilla.auth.application.service.user.UserService;
 import com.bookzilla.auth.domain.user.BusinessRole;
 import com.bookzilla.auth.domain.user.User;
 import com.bookzilla.contracts.event.UserRegistered;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +40,9 @@ public class UserServiceTest {
     @Mock
     private IdentityProvider identityProvider;
 
+    @Mock
+    private RetryableOperationRepository retryableOperationRepository;
+
     private UserService userService;
 
     @BeforeEach
@@ -46,7 +51,9 @@ public class UserServiceTest {
                 userRepository,
                 applicationEventPublisher,
                 identityProvider,
-                new TestTransactionManager()
+                retryableOperationRepository,
+                new TestTransactionManager(),
+                new ObjectMapper()
         );
     }
 
