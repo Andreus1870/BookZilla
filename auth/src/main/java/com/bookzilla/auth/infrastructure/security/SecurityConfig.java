@@ -8,11 +8,18 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private final RateLimiter rateLimiter;
+
+    public SecurityConfig(RateLimiter rateLimiter) {
+        this.rateLimiter = rateLimiter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -37,6 +44,7 @@ public class SecurityConfig {
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter())
                         )
                 )
+                .addFilterAfter(new RateLimitingFilter(rateLimiter), BearerTokenAuthenticationFilter.class)
                 .build();
     }
 
