@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 
 local key = KEYS[1]
 
