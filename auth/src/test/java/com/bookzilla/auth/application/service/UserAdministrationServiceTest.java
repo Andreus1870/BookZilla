@@ -57,6 +57,7 @@ public class UserAdministrationServiceTest {
 
         when(userRepository.getUserByEmail(email)).thenReturn(Optional.of(user));
         when(identityProvider.hasUserRole(keycloakId)).thenReturn(true);
+        when(userRepository.deleteUserByEmail(email)).thenReturn(true);
 
         // act
         userAdministrationService.deleteUser(email);
