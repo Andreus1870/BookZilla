@@ -33,18 +33,18 @@ public class JpaUserRepositoryAdapter implements UserRepository {
 
     @Override
     public boolean existsByEmail(String email) {
-        return jpaUserRepository.existsByEmail(email);
+        return jpaUserRepository.existsByEmailIgnoreCaseAndIsDeletedFalse(email);
     }
 
     @Override
     public Optional<User> getUserByEmail(String email) {
-        return jpaUserRepository.findByEmailIgnoreCase(email)
+        return jpaUserRepository.findByEmailIgnoreCase(email).filter(jpaUser -> !jpaUser.isDeleted())
                 .map(userMapper::toDomain);
     }
 
     @Override
     public Optional<User> getUserByKeycloakId(UUID keycloakId){
-        return jpaUserRepository.getUserByKeycloakId(keycloakId)
+        return jpaUserRepository.getUserByKeycloakId(keycloakId).filter(jpaUser -> !jpaUser.isDeleted())
                 .map(userMapper::toDomain);
     }
 
@@ -52,6 +52,7 @@ public class JpaUserRepositoryAdapter implements UserRepository {
     public List<User> getAllUsers() {
         return jpaUserRepository.findAll()
                 .stream()
+                .filter(jpaUser -> !jpaUser.isDeleted())
                 .map(userMapper::toDomain)
                 .toList();
     }

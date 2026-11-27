@@ -13,7 +13,7 @@ import java.util.UUID;
 @Repository
 public interface JpaUserRepository extends JpaRepository<UserJpaEntity, UUID> {
 
-    boolean existsByEmail(String email);
+    boolean existsByEmailIgnoreCaseAndIsDeletedFalse(String email);
 
     Optional<UserJpaEntity> findByEmailIgnoreCase(String email);
 
