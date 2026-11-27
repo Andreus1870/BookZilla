@@ -10,6 +10,7 @@ import com.bookzilla.booking.infrastructure.persistence.client.JpaClientReposito
 import com.bookzilla.booking.infrastructure.persistence.provider.JpaProviderRepository;
 import com.bookzilla.contracts.event.UserRegistered;
 import com.bookzilla.integration.config.BookingDatabaseTestConfiguration;
+import com.bookzilla.integration.config.CompensationDatabaseTestConfiguration;
 import com.bookzilla.integration.config.UserDatabaseTestConfiguration;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Import({
         BookingDatabaseTestConfiguration.class,
+        CompensationDatabaseTestConfiguration.class,
         UserDatabaseTestConfiguration.class
 })
 public class UserRegistrationIntegrationTest {
